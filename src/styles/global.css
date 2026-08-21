@@ -315,44 +315,78 @@
   }
 
   /*
-   * The reviews band.
+   * The reviews band, in Thumbtack's blue.
    *
-   * Flat --app-surface-2 read as a dead panel between two livelier sections.
-   * Two very wide, very low-opacity ellipses in Thumbtack's blue and green
-   * give it a direction to sit in without becoming a coloured block: the
-   * strongest tint here is 16% alpha. The point is that this stretch of page
-   * is quoting somewhere else, and it should feel like it.
+   * This is a real band, not a tint. It follows .band-deep: one saturated
+   * ground that stays dark in BOTH themes, with wide radial gradients over it
+   * so the colour has somewhere to travel instead of sitting there as a flat
+   * rectangle.
+   *
+   * The ground is #015b80 rather than their #0175a3 because white body text
+   * measures 5.19:1 on #0175a3 but the muted variant drops to 3.5:1, under the
+   * minimum. #015b80 is the same blue darkened until the muted text clears it,
+   * and their brighter #009fd9 comes back on top as the largest gradient, so
+   * the section still reads as Thumbtack blue rather than navy.
    */
   .band-reviews {
-    background-color: var(--app-surface-2);
+    background-color: #015b80;
+    color: #f2fbff;
     background-image:
-      radial-gradient(ellipse 75% 65% at 10% -10%, var(--app-tt-wash), transparent 70%),
-      radial-gradient(ellipse 65% 60% at 95% 6%, var(--app-tt-wash-2), transparent 72%);
+      radial-gradient(ellipse 85% 75% at 6% -18%, rgb(0 159 217 / 0.62), transparent 66%),
+      radial-gradient(ellipse 55% 55% at 97% 4%, rgb(45 183 131 / 0.32), transparent 70%),
+      radial-gradient(ellipse 75% 55% at 50% 118%, rgb(0 0 0 / 0.25), transparent 72%);
+  }
+
+  :root[data-theme='dark'] .band-reviews {
+    background-color: #01455f;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .band-reviews {
+      background-color: #01455f;
+    }
+  }
+
+  /* Text sitting directly on the reviews band, which is dark in both themes. */
+  .on-tt {
+    color: #f2fbff;
+  }
+  .on-tt-muted {
+    color: rgb(242 251 255 / 0.82);
   }
 
   /*
-   * A review card. Two shadows rather than one: a tight contact shadow so the
-   * edge does not float, and a wide soft one that does the actual lifting.
-   * --app-shadow already carries the theme, so this darkens correctly instead
-   * of smearing grey over the dark ground.
+   * A review card, white in both themes.
+   *
+   * The previous version used --app-raised, which put #1e251b on a #1b2118
+   * section: 1.05:1, a card with no visible edge at all. Against a saturated
+   * blue ground a white card separates completely, and it is also how the
+   * reviews look on Thumbtack itself. Because the card no longer follows the
+   * theme, everything printed on it is fixed here rather than inherited.
    */
   .review-card {
-    background-color: var(--app-raised);
-    border: 1px solid var(--app-border);
+    background-color: #ffffff;
+    color: #22262a;
+    border: 1px solid rgb(34 38 42 / 0.08);
     box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.05),
-      0 16px 32px -20px var(--app-shadow);
+      0 1px 2px rgb(3 32 45 / 0.16),
+      0 18px 36px -20px rgb(3 32 45 / 0.55);
     transition:
       transform 180ms ease,
       box-shadow 180ms ease;
+  }
+
+  /* The date and job line inside a card. 4.6:1 on white. */
+  .review-card-meta {
+    color: #666d74;
   }
 
   @media (hover: hover) {
     .review-card:hover {
       transform: translateY(-3px);
       box-shadow:
-        0 2px 4px rgb(0 0 0 / 0.06),
-        0 26px 48px -22px var(--app-shadow);
+        0 2px 4px rgb(3 32 45 / 0.18),
+        0 28px 52px -22px rgb(3 32 45 / 0.6);
     }
   }
 
@@ -378,14 +412,19 @@
     overflow: hidden;
   }
 
-  /* The source tag on each card. Thumbtack's blue, at chip weight. */
-  .tt-chip {
-    background-color: var(--app-tt-chip);
-    color: var(--app-tt-ink);
+  /*
+   * Star and source tag. Both print on the white card, so both are fixed
+   * rather than theme-aware: #1e9e6e is Thumbtack's star green deepened to
+   * clear 3:1 on white (their own #2db783 measures 2.56:1), and #0175a3 is
+   * the blue they themselves switch to for text.
+   */
+  .tt-star {
+    color: #1e9e6e;
   }
 
-  .tt-star {
-    color: var(--app-tt-star);
+  .tt-chip {
+    background-color: rgb(0 159 217 / 0.12);
+    color: #0175a3;
   }
 
   /*
