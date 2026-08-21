@@ -121,6 +121,27 @@ export const en = {
     ],
   },
 
+  /**
+   * The wall of finished work. Captions pair by position with the list in
+   * data/gallery.ts, so do not reorder one without the other.
+   */
+  gallery: {
+    eyebrow: 'The work',
+    heading: 'Jobs that photograph well',
+    body: 'Not a portfolio so much as a record. Every one of these is a machine that was in pieces on somebody’s floor a few hours earlier.',
+    empty: 'Photo goes here',
+    items: [
+      'A treadmill carried down to a finished basement',
+      'A power rack built and levelled against the floor',
+      'Cable and pulley after a service',
+      'A staircase that decided how the machine went up',
+      'A hotel fitness room, serviced out of hours',
+      'Hardware bagged and labelled before a move',
+      'A worn belt next to the one that replaced it',
+      'A garage gym, finished and swept',
+    ],
+  },
+
   brands: {
     eyebrow: 'Equipment',
     heading: 'The machines I work on',

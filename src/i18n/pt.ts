@@ -114,6 +114,23 @@ export const pt: Dict = {
     ],
   },
 
+  gallery: {
+    eyebrow: 'O trabalho',
+    heading: 'Serviços que ficam bem em foto',
+    body: 'Mais do que portfólio, é registo. Cada um destes é uma máquina que umas horas antes estava em peças no chão de alguém.',
+    empty: 'Aqui entra uma foto',
+    items: [
+      'Uma esteira descida até uma cave acabada',
+      'Um rack montado e nivelado contra o chão',
+      'Cabo e roldana depois do serviço',
+      'A escada que decidiu como a máquina subiu',
+      'Uma sala de ginástica de hotel, atendida fora de horas',
+      'Parafusos ensacados e etiquetados antes de uma mudança',
+      'Uma lona gasta ao lado da que a substituiu',
+      'Uma academia de garagem, acabada e varrida',
+    ],
+  },
+
   brands: {
     eyebrow: 'Equipamentos',
     heading: 'As máquinas com que eu trabalho',

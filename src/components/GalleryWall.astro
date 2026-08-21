@@ -1,0 +1,156 @@
+---
+import { Image } from 'astro:assets';
+import { gallery } from '@data/gallery';
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * The wall of finished work, laid out as masonry.
+ *
+ * NO JAVASCRIPT, AND NO LIBRARY. Masonry is usually reached for as a React
+ * component that measures every tile and absolutely positions it on resize.
+ * CSS multi-column does the same job here for nothing: the browser flows the
+ * tiles down column one, then column two, and `break-inside: avoid` stops a
+ * photo being sliced across the boundary. This page ships about 2KB of script
+ * in total and a masonry library would be twenty times that on its own.
+ *
+ * The one thing columns cost is reading order: tiles run top-to-bottom per
+ * column rather than left-to-right per row. For a wall of photographs where no
+ * tile depends on the one beside it, that is not a sequence anybody reads, so
+ * nothing is lost.
+ *
+ * MIXED RATIOS ARE THE POINT. Uniform rectangles in columns is just a grid
+ * with extra steps. The ratios come from data/gallery.ts so the wall has its
+ * shape before a single photograph exists, and so whoever supplies a photo
+ * knows the crop it has to survive.
+ *
+ * AN EMPTY SLOT IS ALLOWED TO OUTGROW ITS RATIO, and does: at 166px wide on a
+ * phone the 16/9 slot renders nearer 1/1 because the caption needs the room.
+ * That is the right way round. `aspect-ratio` yields to content rather than
+ * clipping it, so the alternative to a slightly taller box is a caption with
+ * its last line cut off. Do not "fix" this by forcing a height. It only
+ * affects empty slots — once the photograph is in, the image holds the ratio
+ * exactly and the caption sits below it, where it cannot collide with
+ * anything.
+ *
+ * Captions pair BY POSITION with the ids in data/gallery.ts. The ids are
+ * structure and the captions are copy, so they live apart, and pairing by
+ * index means a translator cannot put the wrong caption under a photo by
+ * renaming a key.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+
+const photos = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/gallery/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+
+const wall = gallery.map((shot, index) => ({
+  ...shot,
+  caption: dict.gallery.items[index] ?? '',
+  art:
+    photos[`/src/assets/gallery/${shot.id}.jpg`]?.default ??
+    photos[`/src/assets/gallery/${shot.id}.jpeg`]?.default ??
+    photos[`/src/assets/gallery/${shot.id}.png`]?.default ??
+    photos[`/src/assets/gallery/${shot.id}.webp`]?.default ??
+    photos[`/src/assets/gallery/${shot.id}.avif`]?.default,
+}));
+---
+
+<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+  <div class="max-w-2xl">
+    <p class="eyebrow text-accent">{dict.gallery.eyebrow}</p>
+    <h2 class="display display-lg mt-4 text-body">{dict.gallery.heading}</h2>
+    <p class="mt-5 leading-relaxed text-muted">{dict.gallery.body}</p>
+  </div>
+
+  <ul class="masonry mt-10">
+    {
+      wall.map((item) => (
+        <li class="masonry__item">
+          {item.art ? (
+            <figure class="overflow-hidden rounded-2xl border border-line bg-raised">
+              <Image
+                src={item.art}
+                alt={item.caption}
+                widths={[320, 480, 720]}
+                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw"
+                loading="lazy"
+                class="w-full object-cover"
+                style={`aspect-ratio: ${item.ratio}`}
+              />
+              <figcaption class="px-4 py-3 text-sm leading-snug text-muted">
+                {item.caption}
+              </figcaption>
+            </figure>
+          ) : (
+            <div
+              class="flex flex-col justify-between rounded-2xl border-2 border-dashed border-line-strong bg-surface-2 p-4"
+              style={`aspect-ratio: ${item.ratio}`}
+              data-gallery-slot={item.id}
+            >
+              <span class="self-start rounded-full bg-accent-solid px-2.5 py-1 text-[0.6rem] font-extrabold tracking-widest text-white uppercase">
+                {dict.gallery.empty}
+              </span>
+              <div>
+                <p class="text-sm leading-snug font-bold text-body">{item.caption}</p>
+                <p class="mt-1.5 font-mono text-[0.6rem] tracking-wider text-faint uppercase">
+                  {item.id}.jpg
+                </p>
+              </div>
+            </div>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  /*
+   * Multi-column is the masonry.
+   *
+   * Two columns from the smallest screen, not one. Eight full-width tiles
+   * stacked measured 3,321px on a 375px phone, which is four screens of
+   * gallery to scroll past on the device most of this traffic arrives on.
+   * Two columns halves that, and a photograph of a rack does not need to be
+   * 343px wide to be read.
+   */
+  .masonry {
+    column-count: 2;
+    column-gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .masonry {
+      column-gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry {
+      column-count: 3;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .masonry {
+      column-count: 4;
+    }
+  }
+
+  /*
+   * break-inside is what makes this masonry rather than newspaper text: without
+   * it the browser will happily cut a photograph in half at the column
+   * boundary and continue it at the top of the next one.
+   */
+  .masonry__item {
+    break-inside: avoid;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .masonry__item {
+      margin-bottom: 1.25rem;
+    }
+  }
+</style>

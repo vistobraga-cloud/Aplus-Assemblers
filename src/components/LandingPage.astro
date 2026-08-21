@@ -5,6 +5,7 @@ import ContactButtons from '@components/ContactButtons.astro';
 import BookingSection from '@components/BookingSection.astro';
 import BrandWall from '@components/BrandWall.astro';
 import KitStrip from '@components/KitStrip.astro';
+import GalleryWall from '@components/GalleryWall.astro';
 import ReviewCarousel from '@components/ReviewCarousel.astro';
 import ServiceRadiusMap from '@components/ServiceRadiusMap.astro';
 import Faq from '@components/Faq.astro';
@@ -213,6 +214,11 @@ const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'movi
       </ol>
     </div>
   </section>
+
+  {/* The work itself, before what people said about it: the photographs are
+      the claim and the reviews are the corroboration, so they read in that
+      order. */}
+  <GalleryWall />
 
   <!-- Reviews -->
   <ReviewCarousel />
