@@ -392,14 +392,23 @@
    * the only part of the picture there is anything to see in.
    *
    * On a phone the hero is a tall column with the copy stacked down it, so
-   * there is no left to protect; the gradient runs top to bottom instead.
+   * there is no left to protect and no point easing off at the bottom either:
+   * the buttons are down there. The gradient runs top to bottom and stays
+   * heavy the whole way.
+   *
+   * THESE NUMBERS WERE MEASURED, NOT PICKED. The worst pixel behind each piece
+   * of text was sampled off the photograph and blended with the veil above it.
+   * At the original strength the headline measured 2.4:1 against white, which
+   * looked fine on average and failed wherever the glass door behind it is
+   * bright. Weaken these and re-measure, or take a headline nobody can read on
+   * a sunny screen.
    */
   .hero-veil {
     background-image: linear-gradient(
       to bottom,
-      rgb(0 0 0 / 0.55) 0%,
-      rgb(0 0 0 / 0.42) 55%,
-      rgb(0 0 0 / 0.12) 100%
+      rgb(0 0 0 / 0.72) 0%,
+      rgb(0 0 0 / 0.64) 50%,
+      rgb(0 0 0 / 0.6) 100%
     );
   }
 
@@ -407,10 +416,10 @@
     .hero-veil {
       background-image: linear-gradient(
         to right,
-        rgb(0 0 0 / 0.5) 0%,
-        rgb(0 0 0 / 0.34) 34%,
-        rgb(0 0 0 / 0.06) 58%,
-        rgb(0 0 0 / 0) 72%
+        rgb(0 0 0 / 0.7) 0%,
+        rgb(0 0 0 / 0.62) 45%,
+        rgb(0 0 0 / 0.28) 66%,
+        rgb(0 0 0 / 0) 82%
       );
     }
   }

@@ -94,9 +94,17 @@ const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'movi
     {
       heroArt && (
         <div class="absolute inset-0" aria-hidden="true">
+          {/* layout="none" is load-bearing. The project sets responsiveStyles
+              with a constrained layout globally, which is right for every
+              other image on the page and wrong for this one: it injects
+              aspect-ratio from the file's intrinsic 3584x1184 and --pos:
+              center, which beat h-full and object-right and left the picture
+              124px tall inside a 545px section. Opting out hands sizing back
+              to the classes below. */}
           <Image
             src={heroArt}
             alt=""
+            layout="none"
             widths={[640, 960, 1280, 1600, 1920, 2400]}
             sizes="100vw"
             loading="eager"
