@@ -203,14 +203,17 @@ export const business: Business = businessSchema.parse({
 
   socialProof: {
     platform: 'Thumbtack',
-    jobsCompleted: 325,
+    jobsCompleted: 332,
     rating: 4.9,
-    reviewCount: 184,
+    reviewCount: 189,
     topProSince: 2019,
     asOf: '2026-08',
-    // Read off the public profile and NOT yet confirmed by Julio. Flip this
-    // once he confirms; see scripts/check.mjs, which warns while it is false.
-    confirmedByOwner: false,
+    // Re-read off the live profile on 2026-08-21 and confirmed by Julio. The
+    // previous figures (325 jobs, 184 reviews) were stale; he has kept working
+    // since. The profile header shows 189 while its embedded JSON-LD says 188,
+    // which is Thumbtack disagreeing with itself — the visible number is the
+    // one a customer can check, so that is the one carried here.
+    confirmedByOwner: true,
   },
 
   operator: { name: 'Julio Oliveira', yearsInBusiness: 10 },

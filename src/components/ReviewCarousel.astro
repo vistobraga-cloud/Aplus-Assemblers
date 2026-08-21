@@ -24,6 +24,12 @@ import { getDict, toLocale, fill } from '@i18n/index';
  * self-serving review markup — ineligible for rich results and a manual-action
  * risk. They live in visible HTML with the source named.
  *
+ * CARDS SIZE TO THEIR OWN TEXT (items-start). The reviews are transcribed
+ * verbatim and some are one line while others run three paragraphs. Stretching
+ * them to a common height padded the short ones with a screen of empty space
+ * on a phone, and the alternative — trimming the long ones — is the one thing
+ * this file is not allowed to do.
+ *
  * The carousel is CSS scroll-snap: it works with no JavaScript at all, by
  * swipe on a phone and by keyboard on a desktop. The two buttons are an
  * enhancement that scrolls by one card, and they hide themselves when there is
@@ -89,7 +95,7 @@ function formatDate(iso: string): string {
     <ul
       data-review-track
       tabindex="0"
-      class="review-track mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
+      class="review-track mt-10 flex snap-x snap-mandatory items-start gap-5 overflow-x-auto pb-4"
     >
       {
         cards.map((_, index) => {
