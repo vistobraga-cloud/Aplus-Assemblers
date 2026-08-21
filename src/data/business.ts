@@ -92,7 +92,7 @@ const businessSchema = z.object({
      * env var it silently vanished in any deploy where nobody remembered to
      * set it, which is the one place the link actually matters.
      */
-    profileUrl: z.string().url(),
+    profileUrl: z.url(),
     jobsCompleted: z.number().int().positive(),
     rating: z.number().min(0).max(5),
     reviewCount: z.number().int().positive(),

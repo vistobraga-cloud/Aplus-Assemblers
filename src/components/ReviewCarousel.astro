@@ -58,7 +58,7 @@ function formatDate(iso: string): string {
 }
 ---
 
-<section class="border-t border-line bg-surface-2 py-20 lg:py-28">
+<section class="band-reviews border-t border-line py-20 lg:py-28">
   <div class="mx-auto max-w-6xl px-4 sm:px-6">
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div class="max-w-2xl">
@@ -95,7 +95,7 @@ function formatDate(iso: string): string {
     <ul
       data-review-track
       tabindex="0"
-      class="review-track mt-10 flex snap-x snap-mandatory items-start gap-5 overflow-x-auto pb-4"
+      class="review-track mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
     >
       {
         cards.map((_, index) => {
@@ -103,29 +103,38 @@ function formatDate(iso: string): string {
 
           return (
             <li
-              class={`w-[85vw] max-w-sm flex-none snap-start rounded-2xl p-6 sm:w-96 ${
-                review
-                  ? 'border border-line bg-raised'
-                  : 'border-2 border-dashed border-line-strong'
+              class={`flex w-[85vw] max-w-sm flex-none snap-start flex-col rounded-2xl p-6 sm:w-96 ${
+                review ? 'review-card' : 'border-2 border-dashed border-line-strong'
               }`}
             >
               {review ? (
                 <>
-                  <div class="flex items-center gap-1" aria-label={`${review.rating} / 5`}>
-                    {Array.from({ length: 5 }).map((_, star) => (
-                      <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
-                        <path
-                          fill={star < review.rating ? '#F5B301' : 'currentColor'}
-                          fill-opacity={star < review.rating ? '1' : '0.18'}
-                          d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
-                        />
-                      </svg>
-                    ))}
+                  {/* Stars and source on one line: the rating and who issued
+                      it are a single claim and should not be read apart. */}
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="tt-star flex items-center gap-1" aria-label={`${review.rating} / 5`}>
+                      {Array.from({ length: 5 }).map((_, star) => (
+                        <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
+                          <path
+                            fill="currentColor"
+                            fill-opacity={star < review.rating ? '1' : '0.18'}
+                            d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
+                          />
+                        </svg>
+                      ))}
+                    </div>
+                    <span class="tt-chip rounded-full px-2.5 py-1 text-[0.6rem] font-extrabold tracking-[0.12em] uppercase">
+                      {proof.platform}
+                    </span>
                   </div>
 
-                  <blockquote class="mt-4 leading-relaxed text-body">{review.text}</blockquote>
+                  <blockquote class="review-quote mt-4 leading-relaxed text-body">
+                    {review.text}
+                  </blockquote>
 
-                  <footer class="mt-5 border-t border-line pt-4 text-sm">
+                  {/* mt-auto pins every footer to the bottom, so the row of
+                      cards shares one baseline however long the quote is. */}
+                  <footer class="mt-auto border-t border-line pt-4 text-sm">
                     <p class="font-bold text-body">{review.author}</p>
                     <p class="mt-0.5 text-faint">
                       {formatDate(review.date)}

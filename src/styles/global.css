@@ -83,6 +83,27 @@
   --app-accent-soft: #4f8f4f;
 
   --app-shadow: rgb(16 33 15 / 0.18);
+
+  /*
+   * Thumbtack's own colours, sampled off Julio's live profile: the green they
+   * fill their stars with (#2db783), the brand blue (#009fd9), and the darker
+   * blue they switch to for text on white (#0175a3).
+   *
+   * They appear in exactly one section — the reviews — because that is the one
+   * place showing something earned somewhere else. Borrowing the source's
+   * colour to mark a quotation is not the same as wearing its uniform, so this
+   * stays a tint and an accent and never becomes the section's identity.
+   *
+   * --app-tt-star is deepened here. Thumbtack prints #2db783 on white, which
+   * measures 2.56:1 — under the 3:1 that non-text content needs. #1e9e6e is
+   * the same hue at 3.4:1. The dark theme uses their exact value, which has
+   * 6.2:1 to spare against a near-black card.
+   */
+  --app-tt-star: #1e9e6e;
+  --app-tt-ink: #0175a3;
+  --app-tt-wash: rgb(0 159 217 / 0.13);
+  --app-tt-wash-2: rgb(45 183 131 / 0.1);
+  --app-tt-chip: rgb(0 159 217 / 0.1);
 }
 
 /*
@@ -112,6 +133,14 @@
     --app-accent-soft: #97c799;
 
     --app-shadow: rgb(0 0 0 / 0.5);
+
+    /* Their exact star green clears 6.2:1 on a near-black card, so it is used
+       unmodified here; the ink blue lifts because #0175a3 goes muddy on dark. */
+    --app-tt-star: #2db783;
+    --app-tt-ink: #5cc8ee;
+    --app-tt-wash: rgb(0 159 217 / 0.16);
+    --app-tt-wash-2: rgb(45 183 131 / 0.12);
+    --app-tt-chip: rgb(0 159 217 / 0.16);
   }
 }
 
@@ -137,6 +166,12 @@
   --app-accent-soft: #97c799;
 
   --app-shadow: rgb(0 0 0 / 0.5);
+
+  --app-tt-star: #2db783;
+  --app-tt-ink: #5cc8ee;
+  --app-tt-wash: rgb(0 159 217 / 0.16);
+  --app-tt-wash-2: rgb(45 183 131 / 0.12);
+  --app-tt-chip: rgb(0 159 217 / 0.16);
 }
 
 @theme {
@@ -277,6 +312,80 @@
   }
   .on-deep-faint {
     color: rgb(244 247 242 / 0.58);
+  }
+
+  /*
+   * The reviews band.
+   *
+   * Flat --app-surface-2 read as a dead panel between two livelier sections.
+   * Two very wide, very low-opacity ellipses in Thumbtack's blue and green
+   * give it a direction to sit in without becoming a coloured block: the
+   * strongest tint here is 16% alpha. The point is that this stretch of page
+   * is quoting somewhere else, and it should feel like it.
+   */
+  .band-reviews {
+    background-color: var(--app-surface-2);
+    background-image:
+      radial-gradient(ellipse 75% 65% at 10% -10%, var(--app-tt-wash), transparent 70%),
+      radial-gradient(ellipse 65% 60% at 95% 6%, var(--app-tt-wash-2), transparent 72%);
+  }
+
+  /*
+   * A review card. Two shadows rather than one: a tight contact shadow so the
+   * edge does not float, and a wide soft one that does the actual lifting.
+   * --app-shadow already carries the theme, so this darkens correctly instead
+   * of smearing grey over the dark ground.
+   */
+  .review-card {
+    background-color: var(--app-raised);
+    border: 1px solid var(--app-border);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 16px 32px -20px var(--app-shadow);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  @media (hover: hover) {
+    .review-card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 2px 4px rgb(0 0 0 / 0.06),
+        0 26px 48px -22px var(--app-shadow);
+    }
+  }
+
+  /*
+   * Ten lines, then stop.
+   *
+   * The reviews are transcribed verbatim, and at phone width they run 3, 4, 5,
+   * 5, 6, 7, 9, 10 and 14 lines. Left alone, the 14-line one dragged every
+   * card in the row to its height and put half a phone screen of nothing under
+   * the three-line ones.
+   *
+   * Ten is chosen so exactly one review clamps — the outlier — rather than a
+   * third of them. Clamping is visual only: the stored text is never edited,
+   * the whole review is in the markup for anyone reading it another way, and
+   * the link under the carousel goes to the profile where it can be read in
+   * full.
+   */
+  .review-quote {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 10;
+    line-clamp: 10;
+    overflow: hidden;
+  }
+
+  /* The source tag on each card. Thumbtack's blue, at chip weight. */
+  .tt-chip {
+    background-color: var(--app-tt-chip);
+    color: var(--app-tt-ink);
+  }
+
+  .tt-star {
+    color: var(--app-tt-star);
   }
 
   /*
