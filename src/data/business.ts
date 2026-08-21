@@ -84,6 +84,15 @@ const businessSchema = z.object({
    */
   socialProof: z.object({
     platform: z.string().min(1),
+    /**
+     * The public profile the figures and the transcribed reviews came from.
+     * Lives here rather than in an environment variable because it is a
+     * permanent public fact about the business, like the phone number — not
+     * a secret and not something that differs between environments. As an
+     * env var it silently vanished in any deploy where nobody remembered to
+     * set it, which is the one place the link actually matters.
+     */
+    profileUrl: z.string().url(),
     jobsCompleted: z.number().int().positive(),
     rating: z.number().min(0).max(5),
     reviewCount: z.number().int().positive(),
@@ -203,6 +212,8 @@ export const business: Business = businessSchema.parse({
 
   socialProof: {
     platform: 'Thumbtack',
+    profileUrl:
+      'https://www.thumbtack.com/ma/fall-river/furniture-assembly/plus-assemblers/service/284612489230050451',
     jobsCompleted: 332,
     rating: 4.9,
     reviewCount: 189,

@@ -43,7 +43,7 @@ const vars = {
   count: String(proof.reviewCount),
 };
 
-const profileUrl = import.meta.env.PUBLIC_THUMBTACK_URL ?? '';
+const profileUrl = proof.profileUrl;
 const hasReviews = reviews.length > 0;
 const cards = hasReviews ? reviews : Array.from({ length: REVIEW_PLACEHOLDER_COUNT });
 
