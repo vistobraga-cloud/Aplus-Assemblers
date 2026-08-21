@@ -19,10 +19,30 @@ interface Props {
   shot: ShotId;
   /** `deep` for the near-black bands, which are dark in both themes. */
   tone?: 'default' | 'deep';
+  /**
+   * Above the fold. Loads eagerly and at high priority instead of lazily.
+   *
+   * The hero photograph is the LCP element on a page that paid traffic lands
+   * on cold — lazy-loading it means the browser waits for layout before it
+   * even asks for the picture the whole hero is built around. Every other slot
+   * is below the fold and stays lazy.
+   */
+  eager?: boolean;
+  /** CSS width the slot actually renders at, for picking the right file. */
+  sizes?: string;
+  /** Widths to generate. Raise it for slots that render large. */
+  widths?: number[];
   class?: string;
 }
 
-const { shot: shotId, tone = 'default', class: className = '' } = Astro.props;
+const {
+  shot: shotId,
+  tone = 'default',
+  eager = false,
+  sizes = '(min-width: 1024px) 600px, 100vw',
+  widths = [400, 800, 1200],
+  class: className = '',
+} = Astro.props;
 const shot = shots[shotId];
 
 const photos = import.meta.glob<{ default: ImageMetadata }>(
@@ -49,9 +69,11 @@ const badge = tone === 'deep' ? 'bg-white/10 text-white/80' : 'bg-accent-solid t
     <Image
       src={art}
       alt={shot.label}
-      widths={[400, 800, 1200]}
-      sizes="(min-width: 1024px) 600px, 100vw"
-      loading="lazy"
+      widths={widths}
+      sizes={sizes}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+      decoding={eager ? 'sync' : 'async'}
       class={`w-full rounded-2xl object-cover ${className}`}
       style={`aspect-ratio: ${shot.ratio}`}
     />

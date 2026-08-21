@@ -382,6 +382,31 @@
     }
   }
 
+  /*
+   * The hero photograph, running off the right edge of the screen.
+   *
+   * Inside the centred max-w-6xl container the hero photo rendered 413px wide
+   * on a 1440px screen — the single most important picture on the page, at the
+   * size of a thumbnail. This cancels the container's right gutter so the
+   * image keeps going to the edge of the viewport.
+   *
+   * The gutter is (viewport − container) / 2 plus the container's own 1.5rem
+   * of padding, and collapses to just the padding once the viewport is
+   * narrower than the container. min() covers both cases in one expression.
+   *
+   * Only from lg up. Below that the photo is a normal full-width block above
+   * the buttons, which is what a phone should get — the hero is roughly
+   * 375×1600 there, and nothing about bleeding helps at that shape.
+   *
+   * .band-deep is already overflow-hidden, which is what stops this from
+   * producing a horizontal scrollbar.
+   */
+  @media (min-width: 1024px) {
+    .bleed-right {
+      margin-right: calc(-1 * ((100vw - min(100vw, 72rem)) / 2 + 1.5rem));
+    }
+  }
+
   /* Text sitting directly on the reviews band, which is dark in both themes. */
   .on-tt {
     color: #f2fbff;
