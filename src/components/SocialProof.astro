@@ -29,12 +29,17 @@ import { getDict, toLocale, fill } from '@i18n/index';
  * self-serving review markup — ineligible for rich results and a manual-action
  * risk. They live in visible HTML with the source named.
  *
- * WHY THE PROOF IS BESIDE THE CAROUSEL AND NOT ABOVE IT. This section sits
- * third on the page, straight after the equipment strip, so every pixel of its
- * height pushes "what I do" further from a reader who is two seconds deep and
- * does not yet know what he does. Side by side, the section is as tall as the
- * carousel instead of as tall as both. That is the reason for the two-column
- * grid, not decoration. It stacks below lg, where there is no choice.
+ * COMPACT AND STACKED, AT THE CLIENT'S REQUEST. This was briefly a two-column
+ * layout, proof rail beside carousel, because the section sits third on the
+ * page and every pixel of its height pushes "what I do" further from a reader
+ * who does not yet know what he does. Stacking costs that back, so everything
+ * here is tuned tight to pay for it: the band is py-12/16 rather than
+ * py-20/28, the heading is display-md rather than display-lg, the badges are
+ * one flat row instead of a column of blocks, and the two attribution
+ * sentences share a single line of fine print under the track.
+ *
+ * If this section starts growing again, that is the thing to protect. It is
+ * third on the page.
  *
  * The carousel is CSS scroll-snap: it works with no JavaScript at all, by
  * swipe on a phone and by keyboard on a desktop. The two buttons are an
@@ -77,89 +82,20 @@ function formatDate(iso: string): string {
 }
 ---
 
-<section class="band-reviews py-20 lg:py-28">
-  <div class="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10">
-    {/* The proof rail. */}
-    <div class="lg:col-span-4">
-      <p class="eyebrow text-[#8fe3c4]">{dict.reviews.eyebrow}</p>
-      <h2 class="display display-lg on-tt mt-4">{dict.reviews.heading}</h2>
-
-      <div class="mt-8 flex items-center gap-4">
-        <span class="display on-tt text-5xl leading-none tabular-nums">{proof.rating}</span>
-
-        <div>
-          <span
-            class="tt-star-band flex items-center gap-0.5"
-            role="img"
-            aria-label={fill(dict.proof.rating, vars)}
-          >
-            {
-              Array.from({ length: 5 }).map((_, index) => {
-                // Two stops at the same offset is a hard edge, which is what a
-                // half star is. 100% fills it, 0% leaves it empty.
-                const offset = index < full ? '100%' : index === full && hasHalf ? '50%' : '0%';
-                return (
-                  <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
-                    <defs>
-                      <linearGradient id={`agg-star-${index}`}>
-                        <stop offset={offset} stop-color="currentColor" />
-                        <stop offset={offset} stop-color="currentColor" stop-opacity="0.24" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      fill={`url(#agg-star-${index})`}
-                      d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
-                    />
-                  </svg>
-                );
-              })
-            }
-          </span>
-          <p class="on-tt-muted mt-1.5 text-sm">{fill(dict.proof.rating, vars)}</p>
-        </div>
+<section class="band-reviews py-12 lg:py-16">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+      <div>
+        <p class="eyebrow text-[#8fe3c4]">{dict.reviews.eyebrow}</p>
+        <h2 class="display display-md on-tt mt-2">{dict.reviews.heading}</h2>
       </div>
 
-      <dl class="mt-8 grid grid-cols-3 border-y border-white/15">
-        {
-          facts.map((fact, index) => (
-            <div class={`py-4 ${index > 0 ? 'border-l border-white/15 pl-4' : ''}`}>
-              <dt class="display on-tt text-xl leading-none tabular-nums">{fact.value}</dt>
-              <dd class="on-tt-muted mt-1.5 text-xs leading-snug">{fact.label}</dd>
-            </div>
-          ))
-        }
-      </dl>
-
-      <p class="on-tt-muted mt-7 text-sm leading-relaxed">{fill(dict.reviews.body, vars)}</p>
-      <p class="on-tt-muted mt-4 text-xs leading-relaxed opacity-80">
-        {fill(dict.proof.source, vars)}
-      </p>
-
-      <a
-        href={profileUrl}
-        target="_blank"
-        rel="noopener"
-        data-cta-placement="reviews-source"
-        class="mt-6 inline-block text-sm font-bold text-[#8fe3c4] hover:underline"
-      >
-        {fill(dict.reviews.readOn, vars)} →
-      </a>
-    </div>
-
-    {
-      /* min-w-0 is load-bearing. A grid item defaults to min-width:auto, which
-         refuses to shrink below its content — and this item's content is a
-         scroll track nine cards wide. Without it the column blows past the
-         viewport and the whole page scrolls sideways on a phone, instead of
-         the track scrolling inside it. */
-    }
-    <div class="min-w-0 lg:col-span-8">
       {
-        /* The controls sit above the track rather than under it, so a thumb on
-           a phone is never asked to hit a target beside the thing it is
-           already swiping. */
+        /* The controls sit with the heading rather than under the track, so a
+           thumb on a phone is never asked to hit a target beside the thing it
+           is already swiping. */
       }
-      <div class="mb-5 flex justify-end gap-2" data-review-controls hidden>
+      <div class="flex flex-none gap-2" data-review-controls hidden>
         <button
           type="button"
           data-review-prev
@@ -177,12 +113,65 @@ function formatDate(iso: string): string {
           <Icon name="arrowRight" size={18} />
         </button>
       </div>
+    </div>
 
-      <ul
-        data-review-track
-        tabindex="0"
-        class="review-track flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
-      >
+    {
+      /* The badges, one flat row rather than a stack of boxes. Rating first
+         because it is the figure people look for, then the three that qualify
+         it. Two columns on a phone, four from sm up. */
+    }
+    <dl
+      class="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 rounded-2xl border border-white/15 bg-white/[0.06] px-5 py-4 sm:grid-cols-4"
+    >
+      <div>
+        <dt class="flex items-center gap-2">
+          <span class="display on-tt text-2xl leading-none tabular-nums">{proof.rating}</span>
+          <span
+            class="tt-star-band flex items-center gap-0.5"
+            role="img"
+            aria-label={fill(dict.proof.rating, vars)}
+          >
+            {
+              Array.from({ length: 5 }).map((_, index) => {
+                // Two stops at the same offset is a hard edge, which is what a
+                // half star is. 100% fills it, 0% leaves it empty.
+                const offset = index < full ? '100%' : index === full && hasHalf ? '50%' : '0%';
+                return (
+                  <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
+                    <defs>
+                      <linearGradient id={`agg-star-${index}`}>
+                        <stop offset={offset} stop-color="currentColor" />
+                        <stop offset={offset} stop-color="currentColor" stop-opacity="0.24" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      fill={`url(#agg-star-${index})`}
+                      d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
+                    />
+                  </svg>
+                );
+              })
+            }
+          </span>
+        </dt>
+        <dd class="on-tt-muted mt-1 text-xs leading-snug">{fill(dict.proof.rating, vars)}</dd>
+      </div>
+
+      {
+        facts.map((fact) => (
+          <div>
+            <dt class="display on-tt text-2xl leading-none tabular-nums">{fact.value}</dt>
+            <dd class="on-tt-muted mt-1 text-xs leading-snug">{fact.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <ul
+      data-review-track
+      tabindex="0"
+      class="review-track mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
+    >
         {
           cards.map((_, index) => {
             const review = hasReviews ? reviews[index] : undefined;
@@ -243,7 +232,27 @@ function formatDate(iso: string): string {
             );
           })
         }
-      </ul>
+    </ul>
+
+    {
+      /* Both attributions on one line of fine print: one says the reviews are
+         transcribed verbatim, the other says where the figures came from and
+         that he is background checked and insured. Two paragraphs of small
+         print is what a compact section cannot afford. */
+    }
+    <div class="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <p class="on-tt-muted text-xs leading-relaxed">
+        {fill(dict.reviews.body, vars)} {fill(dict.proof.source, vars)}
+      </p>
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener"
+        data-cta-placement="reviews-source"
+        class="text-xs font-bold whitespace-nowrap text-[#8fe3c4] hover:underline"
+      >
+        {fill(dict.reviews.readOn, vars)} →
+      </a>
     </div>
   </div>
 </section>
