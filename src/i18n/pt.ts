@@ -35,7 +35,6 @@ export const pt: Dict = {
     eyebrow: ['Casas e empresas', 'A {radius} de {base}', '{years} anos'],
     headingLead: 'Equipamento de ginástica montado, revisado e consertado',
     headingAccent: 'e transportado quando você muda.',
-    body: 'Uma esteira tem 300 libras numa caixa só e chega numa palete até o passeio, porque é isso que significa entrega por transportadora. Subir é um trabalho separado de montar. Eu faço os dois — e depois cuido para que continue funcionando.',
     primary: 'Marcar horário',
     secondary: 'Mandar foto no WhatsApp',
     call: 'Ligar {phone}',
@@ -70,9 +69,9 @@ export const pt: Dict = {
   reviews: {
     eyebrow: 'Avaliações',
     heading: 'O que escreveram depois',
-    body: 'Cada uma destas foi deixada no {platform} por alguém que pagou pelo serviço. Estão transcritas palavra por palavra — se preferir, leia na fonte.',
+    body: 'Cada uma destas foi deixada no {platform} por alguém que pagou pelo serviço. Estão transcritas palavra por palavra. Se preferir, leia na fonte.',
     readOn: 'Ler as {count} no {platform}',
-    empty: 'Aqui entra uma avaliação — transcrita do perfil, com o nome e o mês como estão lá',
+    empty: 'Aqui entra uma avaliação, transcrita do perfil, com o nome e o mês como estão lá',
     previous: 'Avaliações anteriores',
     next: 'Mais avaliações',
   },
@@ -86,13 +85,13 @@ export const pt: Dict = {
         key: 'consulting',
         name: 'Consultoria',
         title: 'Antes de comprar',
-        body: 'Se passa pela porta, se sobe a escada, se cabe naquele pé-direito. Se o piso aguenta — o que pesa muito mais numa cave ou em cima de uma garagem do que as pessoas imaginam. Dez anos vendo quais máquinas dão problema valem um telefonema antes de gastar quatro mil dólares.',
+        body: 'Se passa pela porta, se sobe a escada, se cabe naquele pé-direito. Se o piso aguenta, o que pesa muito mais numa cave ou em cima de uma garagem do que as pessoas imaginam. Dez anos vendo quais máquinas dão problema valem um telefonema antes de gastar quatro mil dólares.',
       },
       {
         key: 'installation',
         name: 'Montagem',
         title: 'Quando chega',
-        body: 'Tiro da palete, levo até a sala onde vai ficar e monto no torque que o fabricante manda. Nivelada contra o chão e não contra a própria estrutura — é essa diferença que faz uma esteira nova gastar a lona de um lado só. Firmware e calibração feitos, testada com peso em cima, e a embalagem sai comigo.',
+        body: 'Tiro da palete, levo até a sala onde vai ficar e monto no torque que o fabricante manda. Nivelada contra o chão e não contra a própria estrutura. É essa diferença que faz uma esteira nova gastar a lona de um lado só. Firmware e calibração feitos, testada com peso em cima, e a embalagem sai comigo.',
       },
       {
         key: 'maintenance',
@@ -110,7 +109,7 @@ export const pt: Dict = {
         key: 'moving',
         name: 'Mudança',
         title: 'Quando tem que sair',
-        body: 'Desmontada, parafusos ensacados e etiquetados por conjunto, peças embaladas, e montada de novo no destino para funcionar e não apenas para chegar. É o serviço que as pessoas improvisam e depois lamentam — uma academia desmontada sem etiqueta é uma academia que acaba sendo substituída.',
+        body: 'Desmontada, parafusos ensacados e etiquetados por conjunto, peças embaladas, e montada de novo no destino para funcionar e não apenas para chegar. É o serviço que as pessoas improvisam e depois lamentam. Uma academia desmontada sem etiqueta é uma academia que acaba sendo substituída.',
       },
     ],
   },
@@ -118,7 +117,7 @@ export const pt: Dict = {
   brands: {
     eyebrow: 'Equipamentos',
     heading: 'As máquinas com que eu trabalho',
-    body: 'Dez anos entre equipamento doméstico e semiprofissional. O jeito de montar e de dar manutenção se repete dentro de cada categoria, então a experiência realmente se transfere — mas se a sua for alguma coisa em que nunca pus a mão, eu aviso antes de ir.',
+    body: 'Dez anos entre equipamento doméstico e semiprofissional. O jeito de montar e de dar manutenção se repete dentro de cada categoria, então a experiência realmente se transfere, mas se a sua for alguma coisa em que nunca pus a mão, eu aviso antes de ir.',
     disclaimer:
       'Prestador de serviço independente. Todos os nomes de produtos, logótipos e marcas pertencem aos seus respetivos donos e aparecem apenas para identificar os equipamentos atendidos. Não se afirma nem se sugere qualquer afiliação, autorização, patrocínio ou endosso.',
   },
@@ -126,7 +125,7 @@ export const pt: Dict = {
   businesses: {
     eyebrow: 'Para empresas',
     heading: 'Máquina parada é reclamação do seu cliente',
-    body: 'Academias, hotéis, prédios de apartamentos, salas de ginástica de empresas e clínicas de fisioterapia não compram comodidade — compram disponibilidade. Outro problema, outro acordo.',
+    body: 'Academias, hotéis, prédios de apartamentos, salas de ginástica de empresas e clínicas de fisioterapia não compram comodidade. Compram disponibilidade. Outro problema, outro acordo.',
     points: [
       {
         title: 'Manutenção programada, não emergência',
@@ -162,12 +161,12 @@ export const pt: Dict = {
   booking: {
     eyebrow: 'Marcação',
     heading: 'Escolha um horário que está mesmo livre',
-    body: 'Os blocos são de {slotHours} horas e começam às {opens}. O que você vê é a minha agenda de verdade — horário já ocupado não aparece, então o horário que escolher é o horário que tem.',
-    note: 'O Google manda a confirmação na hora. Se for urgente, ou se nenhum destes servir, ligue — isso é sempre mais rápido.',
+    body: 'Os blocos são de {slotHours} horas e começam às {opens}. O que você vê é a minha agenda de verdade. Horário já ocupado não aparece, então o horário que escolher é o horário que tem.',
+    note: 'O Google manda a confirmação na hora. Se for urgente, ou se nenhum destes servir, ligue. Isso é sempre mais rápido.',
     openInGoogle: 'Abrir a página de marcação',
     fallbackHeading: 'A marcação abre em breve',
     fallbackBody:
-      'A agenda está a ser configurada. Enquanto isso, ligue ou mande mensagem — no mesmo dia você tem um horário real e um preço real.',
+      'A agenda está a ser configurada. Enquanto isso, ligue ou mande mensagem. No mesmo dia você tem um horário real e um preço real.',
   },
 
   area: {
@@ -180,7 +179,7 @@ export const pt: Dict = {
       edge: { title: 'Sim, com uma ressalva', range: 'Em parte fora do raio' },
     },
     edgeNote:
-      'O leste do condado de Worcester, Cape Cod até perto de Hyannis e o sudeste do Connecticut ficam em cima da linha ou logo depois dela. Vale a pena ir — levam taxa de deslocação e pedem um dia organizado à volta deles.',
+      'O leste do condado de Worcester, Cape Cod até perto de Hyannis e o sudeste do Connecticut ficam em cima da linha ou logo depois dela. Vale a pena ir, mas levam taxa de deslocação e pedem um dia organizado à volta deles.',
     caption: 'Distância em linha reta a partir de {base}.',
   },
 
@@ -197,7 +196,7 @@ export const pt: Dict = {
       },
       {
         q: 'Atende equipamento comercial?',
-        a: 'Equipamento semiprofissional e doméstico de gama alta, sim — do tipo que existe em sala de hotel, ginásio de prédio, sala de empresa e clínica. Sala comercial inteira com dezenas de aparelhos eu aceito para manutenção e reparo, e sou direto se o volume for mais do que uma pessoa só devia prometer.',
+        a: 'Equipamento semiprofissional e doméstico de gama alta, sim, do tipo que existe em sala de hotel, ginásio de prédio, sala de empresa e clínica. Sala comercial inteira com dezenas de aparelhos eu aceito para manutenção e reparo, e sou direto se o volume for mais do que uma pessoa só devia prometer.',
       },
       {
         q: 'Quanto custa uma visita?',
@@ -222,7 +221,7 @@ export const pt: Dict = {
 
   footer: {
     tagline:
-      '{operator} — {years} anos, uma pessoa só, cada trabalho do início ao fim. Montagem, manutenção, reparo, mudança e consultoria de equipamento de ginástica.',
+      '{operator}. {years} anos, uma pessoa só, cada trabalho do início ao fim. Montagem, manutenção, reparo, mudança e consultoria de equipamento de ginástica.',
     hours: 'Horário',
     hoursValue: '{days}, das {opens} às {closes}. Domingo fechado.',
     area: 'Área de atendimento',
@@ -241,7 +240,7 @@ export const pt: Dict = {
     body: [
       {
         heading: 'O que este site recolhe',
-        text: 'Este site não tem conta, não tem login e não tem base de dados. Não guarda nada do que você escreve. Se marcar pela agenda, o nome, o email e o telefone que puser vão para o Google Calendar e para mim — para mais lado nenhum.',
+        text: 'Este site não tem conta, não tem login e não tem base de dados. Não guarda nada do que você escreve. Se marcar pela agenda, o nome, o email e o telefone que puser vão para o Google Calendar e para mim, para mais lado nenhum.',
       },
       {
         heading: 'Medição e publicidade',
@@ -249,7 +248,7 @@ export const pt: Dict = {
       },
       {
         heading: 'Marcação',
-        text: 'A agenda de marcação é uma página de compromissos do Google Calendar. O que escrever ali é tratado também segundo a política de privacidade do Google, além desta. A marcação entra na minha agenda e eu entro em contacto por causa do serviço — não se faz mais nada com isso.',
+        text: 'A agenda de marcação é uma página de compromissos do Google Calendar. O que escrever ali é tratado também segundo a política de privacidade do Google, além desta. A marcação entra na minha agenda e eu entro em contacto por causa do serviço. Não se faz mais nada com isso.',
       },
       {
         heading: 'As suas opções',

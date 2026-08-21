@@ -383,27 +383,35 @@
   }
 
   /*
-   * The hero photograph, running off the right edge of the screen.
+   * Insurance under the hero copy, not a filter over the photograph.
    *
-   * Inside the centred max-w-6xl container the hero photo rendered 413px wide
-   * on a 1440px screen — the single most important picture on the page, at the
-   * size of a thumbnail. This cancels the container's right gutter so the
-   * image keeps going to the edge of the viewport.
+   * The artwork is built to carry its own left side — subject on the right,
+   * transparent on the left so the band shows through under the type. So this
+   * is heavy where the words are and gone by the middle, instead of the even
+   * wash a photographic hero would need. Dimming the right would be dimming
+   * the only part of the picture there is anything to see in.
    *
-   * The gutter is (viewport − container) / 2 plus the container's own 1.5rem
-   * of padding, and collapses to just the padding once the viewport is
-   * narrower than the container. min() covers both cases in one expression.
-   *
-   * Only from lg up. Below that the photo is a normal full-width block above
-   * the buttons, which is what a phone should get — the hero is roughly
-   * 375×1600 there, and nothing about bleeding helps at that shape.
-   *
-   * .band-deep is already overflow-hidden, which is what stops this from
-   * producing a horizontal scrollbar.
+   * On a phone the hero is a tall column with the copy stacked down it, so
+   * there is no left to protect; the gradient runs top to bottom instead.
    */
+  .hero-veil {
+    background-image: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.55) 0%,
+      rgb(0 0 0 / 0.42) 55%,
+      rgb(0 0 0 / 0.12) 100%
+    );
+  }
+
   @media (min-width: 1024px) {
-    .bleed-right {
-      margin-right: calc(-1 * ((100vw - min(100vw, 72rem)) / 2 + 1.5rem));
+    .hero-veil {
+      background-image: linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.5) 0%,
+        rgb(0 0 0 / 0.34) 34%,
+        rgb(0 0 0 / 0.06) 58%,
+        rgb(0 0 0 / 0) 72%
+      );
     }
   }
 

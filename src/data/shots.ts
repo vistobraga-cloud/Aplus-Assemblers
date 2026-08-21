@@ -35,7 +35,7 @@ export const shots = {
     id: 'consulting',
     label: 'Tape measure against a doorway or stairwell',
     ratio: '1/1',
-    note: 'The measuring, not the machine — this is the step before anything is bought.',
+    note: 'The measuring, not the machine. This is the step before anything is bought.',
   },
   installation: {
     id: 'installation',

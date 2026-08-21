@@ -34,7 +34,6 @@ export const en = {
     eyebrow: ['Homes and businesses', 'Within {radius} of {base}', '{years} years'],
     headingLead: 'Gym equipment installed, serviced and repaired',
     headingAccent: 'and moved when you move.',
-    body: 'A treadmill is 300 pounds in one crate and it arrives on a pallet at the curb, because that is what freight delivery means. Getting it upstairs is a separate job from building it. I do both — and I keep it running afterwards.',
     primary: 'Book a slot',
     secondary: 'WhatsApp a photo',
     call: 'Call {phone}',
@@ -77,9 +76,9 @@ export const en = {
   reviews: {
     eyebrow: 'Reviews',
     heading: 'What people wrote afterwards',
-    body: 'Every one of these was left on {platform} by someone who paid for the work. They are transcribed here word for word — read them at the source if you would rather.',
+    body: 'Every one of these was left on {platform} by someone who paid for the work. They are transcribed here word for word. Read them at the source if you would rather.',
     readOn: 'Read all {count} on {platform}',
-    empty: 'Review goes here — transcribed from the profile, with the name and month as written',
+    empty: 'Review goes here, transcribed from the profile, with the name and month as written',
     previous: 'Previous reviews',
     next: 'More reviews',
   },
@@ -99,7 +98,7 @@ export const en = {
         key: 'installation',
         name: 'Installation',
         title: 'When it arrives',
-        body: 'Off the pallet, into the room it belongs in, built to the manufacturer torque specs. Levelled against the floor rather than against its own frame — that difference is why a new treadmill wears its belt on one side. Firmware and calibration run, tested under load, packaging leaves with me.',
+        body: 'Off the pallet, into the room it belongs in, built to the manufacturer torque specs. Levelled against the floor rather than against its own frame. That difference is why a new treadmill wears its belt on one side. Firmware and calibration run, tested under load, packaging leaves with me.',
       },
       {
         key: 'maintenance',
@@ -117,7 +116,7 @@ export const en = {
         key: 'moving',
         name: 'Moving',
         title: 'When it has to go',
-        body: 'Dismantled, hardware bagged and labelled by assembly, parts wrapped, then rebuilt at the other end so it works rather than merely arriving. This is the job people improvise and regret — a home gym taken apart without labels is a home gym that gets replaced.',
+        body: 'Dismantled, hardware bagged and labelled by assembly, parts wrapped, then rebuilt at the other end so it works rather than merely arriving. This is the job people improvise and regret. A home gym taken apart without labels is a home gym that gets replaced.',
       },
     ],
   },
@@ -125,7 +124,7 @@ export const en = {
   brands: {
     eyebrow: 'Equipment',
     heading: 'The machines I work on',
-    body: 'Ten years across consumer and light-commercial equipment. The assembly and service mechanism is shared within a category, so experience genuinely transfers — but I will tell you before I come out if yours is something I have not had my hands on.',
+    body: 'Ten years across consumer and light-commercial equipment. The assembly and service mechanism is shared within a category, so experience genuinely transfers, but I will tell you before I come out if yours is something I have not had my hands on.',
     disclaimer:
       'Independent service provider. All product names, logos and brands are the property of their respective owners and are shown only to identify the equipment serviced. No affiliation, authorisation, sponsorship or endorsement is claimed or implied.',
   },
@@ -133,7 +132,7 @@ export const en = {
   businesses: {
     eyebrow: 'For businesses',
     heading: 'A machine out of order is a member complaint',
-    body: 'Gyms, hotels, apartment buildings, corporate fitness rooms and physical therapy clinics do not buy convenience — they buy uptime. Different problem, different arrangement.',
+    body: 'Gyms, hotels, apartment buildings, corporate fitness rooms and physical therapy clinics do not buy convenience. They buy uptime. Different problem, different arrangement.',
     points: [
       {
         title: 'Scheduled maintenance, not emergencies',
@@ -168,12 +167,12 @@ export const en = {
   booking: {
     eyebrow: 'Booking',
     heading: 'Pick a slot that is really open',
-    body: 'Slots are {slotHours} hours long and start at {opens}. What you see is my actual calendar — if a time is taken it does not appear, so the slot you pick is the slot you get.',
-    note: 'You will get a confirmation from Google straight away. For anything urgent, or if none of these work, call me — that is always faster.',
+    body: 'Slots are {slotHours} hours long and start at {opens}. What you see is my actual calendar. If a time is taken it does not appear, so the slot you pick is the slot you get.',
+    note: 'You will get a confirmation from Google straight away. For anything urgent, or if none of these work, call me. That is always faster.',
     openInGoogle: 'Open the booking page',
     fallbackHeading: 'Booking is opening shortly',
     fallbackBody:
-      'The calendar is being set up. Until it is live, call or send a message — you will get a real time and a real price the same day.',
+      'The calendar is being set up. Until it is live, call or send a message. You will get a real time and a real price the same day.',
   },
 
   area: {
@@ -186,7 +185,7 @@ export const en = {
       edge: { title: 'Yes, with a caveat', range: 'Partly outside the radius' },
     },
     edgeNote:
-      'Eastern Worcester County, Cape Cod up to about Hyannis, and southeastern Connecticut sit on or just past the line. Still worth doing — they carry a travel charge and want a day booked around them.',
+      'Eastern Worcester County, Cape Cod up to about Hyannis, and southeastern Connecticut sit on or just past the line. Still worth doing, but they carry a travel charge and want a day booked around them.',
     caption: 'Straight-line distance from {base}.',
   },
 
@@ -203,7 +202,7 @@ export const en = {
       },
       {
         q: 'Do you service commercial equipment?',
-        a: 'Light-commercial and premium consumer equipment, yes — the kind found in hotel fitness rooms, apartment building gyms, corporate rooms and clinics. Full commercial floors with dozens of units I will take on for maintenance and repair, and I will be straight with you if the volume is more than one person should be promising.',
+        a: 'Light-commercial and premium consumer equipment, yes, the kind found in hotel fitness rooms, apartment building gyms, corporate rooms and clinics. Full commercial floors with dozens of units I will take on for maintenance and repair, and I will be straight with you if the volume is more than one person should be promising.',
       },
       {
         q: 'What does a visit cost?',
@@ -228,7 +227,7 @@ export const en = {
 
   footer: {
     tagline:
-      '{operator} — {years} years, one person, every job start to finish. Installation, maintenance, repair, moving and consulting for gym equipment.',
+      '{operator}. {years} years, one person, every job start to finish. Installation, maintenance, repair, moving and consulting for gym equipment.',
     hours: 'Hours',
     hoursValue: '{days}, {opens} to {closes}. Closed Sunday.',
     area: 'Service area',
@@ -247,7 +246,7 @@ export const en = {
     body: [
       {
         heading: 'What this site collects',
-        text: 'This site has no accounts, no login and no database. It does not store anything you type. If you book through the calendar, the name, email and phone number you enter go to Google Calendar and to me — nowhere else.',
+        text: 'This site has no accounts, no login and no database. It does not store anything you type. If you book through the calendar, the name, email and phone number you enter go to Google Calendar and to me, nowhere else.',
       },
       {
         heading: 'Measurement and advertising',
@@ -255,7 +254,7 @@ export const en = {
       },
       {
         heading: 'Booking',
-        text: 'The booking calendar is a Google Calendar appointment page. What you enter there is handled under Google’s privacy policy as well as this one. The appointment lands in my calendar and I contact you about the job — nothing else is done with it.',
+        text: 'The booking calendar is a Google Calendar appointment page. What you enter there is handled under Google’s privacy policy as well as this one. The appointment lands in my calendar and I contact you about the job. Nothing else is done with it.',
       },
       {
         heading: 'Your choices',

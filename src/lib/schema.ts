@@ -105,7 +105,7 @@ export function person(): Json {
 export function services(dict: Dict): Json[] {
   return dict.lifecycle.stages.map((stage) => ({
     '@type': 'Service',
-    name: `${stage.name} — gym equipment`,
+    name: `${stage.name} for gym equipment`,
     description: stage.body,
     serviceType: stage.name,
     provider: { '@id': businessId },

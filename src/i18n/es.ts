@@ -32,7 +32,6 @@ export const es: Dict = {
     eyebrow: ['Casas y negocios', 'A {radius} de {base}', '{years} años'],
     headingLead: 'Equipos de gimnasio instalados, mantenidos y reparados',
     headingAccent: 'y trasladados cuando usted se muda.',
-    body: 'Una caminadora pesa 300 libras en una sola caja y llega en una tarima hasta la acera, porque eso es lo que significa entrega por flete. Subirla es un trabajo aparte de armarla. Yo hago las dos cosas — y después me encargo de que siga funcionando.',
     primary: 'Reservar una cita',
     secondary: 'Enviar una foto por WhatsApp',
     call: 'Llamar al {phone}',
@@ -67,9 +66,9 @@ export const es: Dict = {
   reviews: {
     eyebrow: 'Reseñas',
     heading: 'Lo que escribieron después',
-    body: 'Cada una de estas la dejó en {platform} alguien que pagó por el trabajo. Están transcritas palabra por palabra — si prefiere, léalas en la fuente.',
+    body: 'Cada una de estas la dejó en {platform} alguien que pagó por el trabajo. Están transcritas palabra por palabra. Si prefiere, léalas en la fuente.',
     readOn: 'Leer las {count} en {platform}',
-    empty: 'Aquí va una reseña — transcrita del perfil, con el nombre y el mes tal como aparecen',
+    empty: 'Aquí va una reseña, transcrita del perfil, con el nombre y el mes tal como aparecen',
     previous: 'Reseñas anteriores',
     next: 'Más reseñas',
   },
@@ -89,7 +88,7 @@ export const es: Dict = {
         key: 'installation',
         name: 'Instalación',
         title: 'Cuando llega',
-        body: 'La bajo de la tarima, la llevo al cuarto donde va y la armo con el torque que indica el fabricante. Nivelada contra el piso y no contra su propio marco — esa diferencia es la razón por la que una caminadora nueva desgasta la banda de un solo lado. Firmware y calibración al día, probada con peso encima, y el empaque se va conmigo.',
+        body: 'La bajo de la tarima, la llevo al cuarto donde va y la armo con el torque que indica el fabricante. Nivelada contra el piso y no contra su propio marco. Esa diferencia es la razón por la que una caminadora nueva desgasta la banda de un solo lado. Firmware y calibración al día, probada con peso encima, y el empaque se va conmigo.',
       },
       {
         key: 'maintenance',
@@ -107,7 +106,7 @@ export const es: Dict = {
         key: 'moving',
         name: 'Mudanza',
         title: 'Cuando tiene que irse',
-        body: 'Desarmada, tornillería embolsada y etiquetada por sección, piezas envueltas, y armada de nuevo en el destino para que funcione y no solo para que llegue. Este es el trabajo que la gente improvisa y después lamenta — un gimnasio desarmado sin etiquetas es un gimnasio que termina en la basura.',
+        body: 'Desarmada, tornillería embolsada y etiquetada por sección, piezas envueltas, y armada de nuevo en el destino para que funcione y no solo para que llegue. Este es el trabajo que la gente improvisa y después lamenta. Un gimnasio desarmado sin etiquetas es un gimnasio que termina en la basura.',
       },
     ],
   },
@@ -115,7 +114,7 @@ export const es: Dict = {
   brands: {
     eyebrow: 'Equipos',
     heading: 'Las máquinas con las que trabajo',
-    body: 'Diez años entre equipos de casa y de uso semicomercial. El mecanismo de armado y servicio se repite dentro de cada categoría, así que la experiencia sí se transfiere — pero si la suya es algo que nunca he tocado, se lo digo antes de ir.',
+    body: 'Diez años entre equipos de casa y de uso semicomercial. El mecanismo de armado y servicio se repite dentro de cada categoría, así que la experiencia sí se transfiere, pero si la suya es algo que nunca he tocado, se lo digo antes de ir.',
     disclaimer:
       'Proveedor de servicio independiente. Todos los nombres de productos, logotipos y marcas son propiedad de sus respectivos dueños y se muestran únicamente para identificar los equipos atendidos. No se afirma ni se insinúa ninguna afiliación, autorización, patrocinio ni respaldo.',
   },
@@ -123,7 +122,7 @@ export const es: Dict = {
   businesses: {
     eyebrow: 'Para negocios',
     heading: 'Una máquina fuera de servicio es una queja de su cliente',
-    body: 'Gimnasios, hoteles, edificios de apartamentos, salas de ejercicio de empresas y clínicas de terapia física no compran comodidad — compran disponibilidad. Otro problema, otro arreglo.',
+    body: 'Gimnasios, hoteles, edificios de apartamentos, salas de ejercicio de empresas y clínicas de terapia física no compran comodidad. Compran disponibilidad. Otro problema, otro arreglo.',
     points: [
       {
         title: 'Mantenimiento programado, no emergencias',
@@ -159,12 +158,12 @@ export const es: Dict = {
   booking: {
     eyebrow: 'Reservas',
     heading: 'Elija un horario que de verdad está libre',
-    body: 'Los bloques son de {slotHours} horas y empiezan a las {opens}. Lo que usted ve es mi calendario real — si una hora ya está ocupada, no aparece, así que el horario que elige es el horario que tiene.',
-    note: 'Google le manda la confirmación de inmediato. Si es urgente, o si ninguno de estos le sirve, llámeme — eso siempre es más rápido.',
+    body: 'Los bloques son de {slotHours} horas y empiezan a las {opens}. Lo que usted ve es mi calendario real. Si una hora ya está ocupada, no aparece, así que el horario que elige es el horario que tiene.',
+    note: 'Google le manda la confirmación de inmediato. Si es urgente, o si ninguno de estos le sirve, llámeme. Eso siempre es más rápido.',
     openInGoogle: 'Abrir la página de reservas',
     fallbackHeading: 'Las reservas abren muy pronto',
     fallbackBody:
-      'El calendario se está configurando. Mientras tanto, llame o mande un mensaje — el mismo día tendrá una hora real y un precio real.',
+      'El calendario se está configurando. Mientras tanto, llame o mande un mensaje. El mismo día tendrá una hora real y un precio real.',
   },
 
   area: {
@@ -177,7 +176,7 @@ export const es: Dict = {
       edge: { title: 'Sí, con una advertencia', range: 'Parcialmente fuera del radio' },
     },
     edgeNote:
-      'El este del condado de Worcester, Cape Cod hasta cerca de Hyannis y el sureste de Connecticut quedan sobre la línea o apenas pasándola. Vale la pena ir — llevan cargo por traslado y requieren un día organizado alrededor.',
+      'El este del condado de Worcester, Cape Cod hasta cerca de Hyannis y el sureste de Connecticut quedan sobre la línea o apenas pasándola. Vale la pena ir, pero llevan cargo por traslado y requieren un día organizado alrededor.',
     caption: 'Distancia en línea recta desde {base}.',
   },
 
@@ -194,7 +193,7 @@ export const es: Dict = {
       },
       {
         q: '¿Atiende equipos comerciales?',
-        a: 'Equipos semicomerciales y de gama alta para casa, sí — los que hay en salas de hotel, gimnasios de edificios, salas de empresa y clínicas. Salones comerciales completos con decenas de unidades los tomo para mantenimiento y reparación, y le seré claro si el volumen es más de lo que una sola persona debería prometer.',
+        a: 'Equipos semicomerciales y de gama alta para casa, sí, los que hay en salas de hotel, gimnasios de edificios, salas de empresa y clínicas. Salones comerciales completos con decenas de unidades los tomo para mantenimiento y reparación, y le seré claro si el volumen es más de lo que una sola persona debería prometer.',
       },
       {
         q: '¿Cuánto cuesta una visita?',
@@ -219,7 +218,7 @@ export const es: Dict = {
 
   footer: {
     tagline:
-      '{operator} — {years} años, una sola persona, cada trabajo de principio a fin. Instalación, mantenimiento, reparación, mudanza y asesoría de equipos de gimnasio.',
+      '{operator}. {years} años, una sola persona, cada trabajo de principio a fin. Instalación, mantenimiento, reparación, mudanza y asesoría de equipos de gimnasio.',
     hours: 'Horario',
     hoursValue: '{days}, de {opens} a {closes}. Domingo cerrado.',
     area: 'Área de servicio',
@@ -238,7 +237,7 @@ export const es: Dict = {
     body: [
       {
         heading: 'Qué recoge este sitio',
-        text: 'Este sitio no tiene cuentas, ni inicio de sesión, ni base de datos. No guarda nada de lo que usted escribe. Si reserva por el calendario, el nombre, el correo y el teléfono que ponga van a Google Calendar y a mí — a ningún otro lado.',
+        text: 'Este sitio no tiene cuentas, ni inicio de sesión, ni base de datos. No guarda nada de lo que usted escribe. Si reserva por el calendario, el nombre, el correo y el teléfono que ponga van a Google Calendar y a mí, a ningún otro lado.',
       },
       {
         heading: 'Medición y publicidad',
@@ -246,7 +245,7 @@ export const es: Dict = {
       },
       {
         heading: 'Reservas',
-        text: 'El calendario de reservas es una página de citas de Google Calendar. Lo que escriba ahí se maneja también bajo la política de privacidad de Google, además de esta. La cita entra en mi calendario y yo lo contacto por el trabajo — no se hace nada más con eso.',
+        text: 'El calendario de reservas es una página de citas de Google Calendar. Lo que escriba ahí se maneja también bajo la política de privacidad de Google, además de esta. La cita entra en mi calendario y yo lo contacto por el trabajo. No se hace nada más con eso.',
       },
       {
         heading: 'Sus opciones',

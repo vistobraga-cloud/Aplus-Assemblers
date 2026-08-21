@@ -63,7 +63,7 @@ const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID ?? '';
       var href = link.getAttribute('href') || '';
       var placement = link.getAttribute('data-cta-placement') || 'unknown';
 
-      /* Opening the scheduler. Intent, not a confirmed appointment — see the
+      /* Opening the scheduler. Intent, not a confirmed appointment. See the
          note at the top of this file. */
       if (link.hasAttribute('data-booking-cta')) {
         gtag('event', 'schedule_open', { placement: placement, transport_type: 'beacon' });
