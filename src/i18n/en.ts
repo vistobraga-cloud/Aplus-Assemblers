@@ -37,7 +37,6 @@ export const en = {
     primary: 'Book a slot',
     secondary: 'WhatsApp a photo',
     call: 'Call {phone}',
-    proofTitle: 'The record so far',
   },
 
   /**

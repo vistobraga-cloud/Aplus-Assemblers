@@ -6,11 +6,10 @@ import BookingSection from '@components/BookingSection.astro';
 import BrandWall from '@components/BrandWall.astro';
 import KitStrip from '@components/KitStrip.astro';
 import GalleryWall from '@components/GalleryWall.astro';
-import ReviewCarousel from '@components/ReviewCarousel.astro';
+import SocialProof from '@components/SocialProof.astro';
 import ServiceRadiusMap from '@components/ServiceRadiusMap.astro';
 import Faq from '@components/Faq.astro';
 import PhotoSlot from '@components/PhotoSlot.astro';
-import ProofBadge from '@components/ProofBadge.astro';
 import Icon from '@components/icons/Icon.astro';
 
 import { business, countiesByTier, opensDisplay } from '@data/business';
@@ -164,25 +163,11 @@ const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'movi
   <KitStrip />
 
   {
-    /* Proof, in its own strip rather than inside the hero.
-       "4.9" on its own is a number the visitor has to take on faith; the same
-       figure wearing the platform that issued it is evidence, and Top Pro is a
-       status Thumbtack awards rather than something we can assert.
-
-       It used to sit inside the hero section, which made that section 944px
-       tall at 1920 and dragged its shape to 2:1, so the background artwork had
-       to be drawn tall enough to sit behind a Thumbtack badge. Out here the
-       hero is a 3:1 banner and the artwork only has to cover the hero. */
+    /* The rating, the counts and the reviews themselves, in one section. They
+       were two, far apart, telling the same story twice on two blue bands that
+       were nearly the same blue. */
   }
-  <section class="band-deep">
-    <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p class="eyebrow on-deep-faint">{dict.hero.proofTitle}</p>
-      <ProofBadge tone="deep" class="mt-5" />
-      <p class="on-deep-faint mt-6 max-w-2xl text-sm leading-relaxed">
-        {fill(dict.proof.source, vars)}
-      </p>
-    </div>
-  </section>
+  <SocialProof />
 
   <!-- The lifecycle -->
   <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
@@ -232,9 +217,6 @@ const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'movi
       the claim and the reviews are the corroboration, so they read in that
       order. */}
   <GalleryWall />
-
-  <!-- Reviews -->
-  <ReviewCarousel />
 
   <!-- Brands -->
   <BrandWall />

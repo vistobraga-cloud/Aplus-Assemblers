@@ -35,7 +35,6 @@ export const es: Dict = {
     primary: 'Reservar una cita',
     secondary: 'Enviar una foto por WhatsApp',
     call: 'Llamar al {phone}',
-    proofTitle: 'El historial hasta hoy',
   },
 
   kit: [

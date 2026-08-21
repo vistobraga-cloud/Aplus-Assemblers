@@ -38,7 +38,6 @@ export const pt: Dict = {
     primary: 'Marcar horário',
     secondary: 'Mandar foto no WhatsApp',
     call: 'Ligar {phone}',
-    proofTitle: 'O histórico até aqui',
   },
 
   kit: [

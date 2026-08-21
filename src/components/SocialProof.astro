@@ -1,0 +1,301 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import { business } from '@data/business';
+import { reviews, REVIEW_PLACEHOLDER_COUNT } from '@data/reviews';
+import { getDict, toLocale, fill } from '@i18n/index';
+
+/**
+ * The Thumbtack proof and the reviews, in one section.
+ *
+ * They used to be two: a badge strip high on the page and a carousel far below
+ * it, which was the same argument told twice, on two near-identical blue
+ * bands, with two different colours of star. One argument, one band, one star.
+ *
+ * NOT FETCHED, AND IT CANNOT BE. Thumbtack publishes no public reviews API, so
+ * nothing here can pull them at runtime; scraping the profile would breach
+ * their terms and this is a static build with no server to run it from. The
+ * reviews are transcribed by hand into src/data/reviews.ts and attributed to
+ * the platform, with a link back so anyone can check them at the source.
+ *
+ * THE NUMBER HAS TO WEAR THE PLATFORM. The aggregate was once four bare
+ * figures in a row — 325, 4.9, 10, Top Pro — which is data, not proof. A
+ * number nobody can attribute is a claim the visitor has to take on faith; the
+ * same number wearing the platform that issued it is evidence. Top Pro is a
+ * status Thumbtack awards and the rating is a figure it publishes, so naming
+ * the source is both the honest move and the persuasive one.
+ *
+ * NO Review OR aggregateRating MARKUP. These were earned on Thumbtack, not
+ * here. Marking up a third party's reviews on our own business node is
+ * self-serving review markup — ineligible for rich results and a manual-action
+ * risk. They live in visible HTML with the source named.
+ *
+ * WHY THE PROOF IS BESIDE THE CAROUSEL AND NOT ABOVE IT. This section sits
+ * third on the page, straight after the equipment strip, so every pixel of its
+ * height pushes "what I do" further from a reader who is two seconds deep and
+ * does not yet know what he does. Side by side, the section is as tall as the
+ * carousel instead of as tall as both. That is the reason for the two-column
+ * grid, not decoration. It stacks below lg, where there is no choice.
+ *
+ * The carousel is CSS scroll-snap: it works with no JavaScript at all, by
+ * swipe on a phone and by keyboard on a desktop. The two buttons are an
+ * enhancement that scrolls by one card, and they hide themselves when there is
+ * nothing to scroll.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+const proof = business.socialProof;
+
+const vars = {
+  platform: proof.platform,
+  count: String(proof.reviewCount),
+  year: String(proof.topProSince),
+  years: String(business.operator.yearsInBusiness),
+};
+
+const profileUrl = proof.profileUrl;
+const hasReviews = reviews.length > 0;
+const cards = hasReviews ? reviews : Array.from({ length: REVIEW_PLACEHOLDER_COUNT });
+
+/** Drawn from the rating, so the mark can never say 4.5 while the data says 4.9. */
+const full = Math.floor(proof.rating);
+const hasHalf = proof.rating - full >= 0.25;
+
+/** Top Pro is a status, the other two are counts. Same cell, same weight. */
+const facts = [
+  { value: 'Top Pro', label: fill(dict.proof.topPro, vars) },
+  { value: String(proof.jobsCompleted), label: dict.proof.jobs },
+  { value: vars.years, label: dict.proof.years },
+];
+
+/** Month and year in the reader's own language. */
+function formatDate(iso: string): string {
+  const [year, month] = iso.split('-').map(Number);
+  if (!year || !month) return iso;
+  return new Date(year, month - 1, 1).toLocaleDateString(dict.htmlLang, {
+    month: 'long',
+    year: 'numeric',
+  });
+}
+---
+
+<section class="band-reviews py-20 lg:py-28">
+  <div class="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10">
+    {/* The proof rail. */}
+    <div class="lg:col-span-4">
+      <p class="eyebrow text-[#8fe3c4]">{dict.reviews.eyebrow}</p>
+      <h2 class="display display-lg on-tt mt-4">{dict.reviews.heading}</h2>
+
+      <div class="mt-8 flex items-center gap-4">
+        <span class="display on-tt text-5xl leading-none tabular-nums">{proof.rating}</span>
+
+        <div>
+          <span
+            class="tt-star-band flex items-center gap-0.5"
+            role="img"
+            aria-label={fill(dict.proof.rating, vars)}
+          >
+            {
+              Array.from({ length: 5 }).map((_, index) => {
+                // Two stops at the same offset is a hard edge, which is what a
+                // half star is. 100% fills it, 0% leaves it empty.
+                const offset = index < full ? '100%' : index === full && hasHalf ? '50%' : '0%';
+                return (
+                  <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
+                    <defs>
+                      <linearGradient id={`agg-star-${index}`}>
+                        <stop offset={offset} stop-color="currentColor" />
+                        <stop offset={offset} stop-color="currentColor" stop-opacity="0.24" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      fill={`url(#agg-star-${index})`}
+                      d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
+                    />
+                  </svg>
+                );
+              })
+            }
+          </span>
+          <p class="on-tt-muted mt-1.5 text-sm">{fill(dict.proof.rating, vars)}</p>
+        </div>
+      </div>
+
+      <dl class="mt-8 grid grid-cols-3 border-y border-white/15">
+        {
+          facts.map((fact, index) => (
+            <div class={`py-4 ${index > 0 ? 'border-l border-white/15 pl-4' : ''}`}>
+              <dt class="display on-tt text-xl leading-none tabular-nums">{fact.value}</dt>
+              <dd class="on-tt-muted mt-1.5 text-xs leading-snug">{fact.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p class="on-tt-muted mt-7 text-sm leading-relaxed">{fill(dict.reviews.body, vars)}</p>
+      <p class="on-tt-muted mt-4 text-xs leading-relaxed opacity-80">
+        {fill(dict.proof.source, vars)}
+      </p>
+
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener"
+        data-cta-placement="reviews-source"
+        class="mt-6 inline-block text-sm font-bold text-[#8fe3c4] hover:underline"
+      >
+        {fill(dict.reviews.readOn, vars)} →
+      </a>
+    </div>
+
+    {
+      /* min-w-0 is load-bearing. A grid item defaults to min-width:auto, which
+         refuses to shrink below its content — and this item's content is a
+         scroll track nine cards wide. Without it the column blows past the
+         viewport and the whole page scrolls sideways on a phone, instead of
+         the track scrolling inside it. */
+    }
+    <div class="min-w-0 lg:col-span-8">
+      {
+        /* The controls sit above the track rather than under it, so a thumb on
+           a phone is never asked to hit a target beside the thing it is
+           already swiping. */
+      }
+      <div class="mb-5 flex justify-end gap-2" data-review-controls hidden>
+        <button
+          type="button"
+          data-review-prev
+          aria-label={dict.reviews.previous}
+          class="on-tt inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 transition hover:bg-white/15"
+        >
+          <Icon name="arrowRight" size={18} class="rotate-180" />
+        </button>
+        <button
+          type="button"
+          data-review-next
+          aria-label={dict.reviews.next}
+          class="on-tt inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 transition hover:bg-white/15"
+        >
+          <Icon name="arrowRight" size={18} />
+        </button>
+      </div>
+
+      <ul
+        data-review-track
+        tabindex="0"
+        class="review-track flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
+      >
+        {
+          cards.map((_, index) => {
+            const review = hasReviews ? reviews[index] : undefined;
+
+            return (
+              <li
+                class={`flex w-[85vw] max-w-sm flex-none snap-start flex-col rounded-2xl p-6 sm:w-96 ${
+                  review ? 'review-card' : 'border-2 border-dashed border-white/30'
+                }`}
+              >
+                {review ? (
+                  <>
+                    {/* Stars and source on one line: the rating and who issued
+                        it are a single claim and should not be read apart. */}
+                    <div class="flex items-center justify-between gap-3">
+                      <div
+                        class="tt-star flex items-center gap-1"
+                        aria-label={`${review.rating} / 5`}
+                      >
+                        {Array.from({ length: 5 }).map((_, star) => (
+                          <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
+                            <path
+                              fill="currentColor"
+                              fill-opacity={star < review.rating ? '1' : '0.18'}
+                              d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
+                            />
+                          </svg>
+                        ))}
+                      </div>
+                      <span class="tt-chip rounded-full px-2.5 py-1 text-[0.6rem] font-extrabold tracking-[0.12em] uppercase">
+                        {proof.platform}
+                      </span>
+                    </div>
+
+                    <blockquote class="review-quote mt-4 leading-relaxed">{review.text}</blockquote>
+
+                    {/* mt-auto pins every footer to the bottom, so the row of
+                        cards shares one baseline however long the quote is. */}
+                    <footer class="mt-auto border-t border-[rgb(34_38_42/0.10)] pt-4 text-sm">
+                      <p class="font-bold">{review.author}</p>
+                      <p class="review-card-meta mt-0.5">
+                        {formatDate(review.date)}
+                        {review.job && <span> · {review.job}</span>}
+                      </p>
+                    </footer>
+                  </>
+                ) : (
+                  <div class="flex h-56 flex-col items-center justify-center text-center">
+                    <p class="on-tt-muted text-[0.65rem] font-extrabold tracking-[0.18em] uppercase">
+                      {proof.platform}
+                    </p>
+                    <p class="on-tt-muted mt-3 max-w-[16rem] text-sm leading-relaxed">
+                      {dict.reviews.empty}
+                    </p>
+                  </div>
+                )}
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .review-track {
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+
+  .review-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .review-track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Progressive enhancement only. Without this the track is still swipeable
+   * and keyboard-scrollable; the buttons simply stay hidden, which is why they
+   * ship with `hidden` set and are revealed here.
+   */
+  const track = document.querySelector<HTMLElement>('[data-review-track]');
+  const controls = document.querySelector<HTMLElement>('[data-review-controls]');
+
+  if (track && controls) {
+    const overflows = () => track.scrollWidth > track.clientWidth + 4;
+
+    const sync = () => {
+      controls.hidden = !overflows();
+    };
+
+    const step = () => {
+      const card = track.querySelector<HTMLElement>('li');
+      // Fall back to most of a viewport when the card cannot be measured.
+      return card ? card.offsetWidth + 20 : track.clientWidth * 0.8;
+    };
+
+    document
+      .querySelector('[data-review-prev]')
+      ?.addEventListener('click', () => track.scrollBy({ left: -step() }));
+
+    document
+      .querySelector('[data-review-next]')
+      ?.addEventListener('click', () => track.scrollBy({ left: step() }));
+
+    sync();
+    window.addEventListener('resize', sync, { passive: true });
+  }
+</script>

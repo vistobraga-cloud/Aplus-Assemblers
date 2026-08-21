@@ -505,6 +505,18 @@
   }
 
   /*
+   * The same star, on the band instead of on a card.
+   *
+   * .tt-star above is #1e9e6e, picked to clear 3:1 on white. The aggregate
+   * rating prints on the blue band, where that green measures about 2.3:1 and
+   * Thumbtack's own #2db783 only reaches 2.96 — both under the 3:1 that
+   * non-text content needs. This is the same hue lifted until it passes.
+   */
+  .tt-star-band {
+    color: #5fd9ab;
+  }
+
+  /*
    * Brand logos are almost always dark artwork on transparency, so they
    * disappear on a dark ground. Rather than hunt down a white variant of
    * seven marks, each sits in a chip that stays light in both themes.
