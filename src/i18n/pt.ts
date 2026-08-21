@@ -42,12 +42,39 @@ export const pt: Dict = {
     proofTitle: 'O histórico até aqui',
   },
 
+  kit: [
+    'Esteiras',
+    'Elípticos',
+    'Estações de musculação',
+    'Power racks',
+    'Bicicletas ergométricas',
+    'Máquinas de remo',
+    'Functional trainers',
+    'Máquinas de cabo',
+    'Bicicletas de spinning',
+    'Bancos de supino',
+    'Racks de agachamento',
+    'Máquinas Smith',
+    'Bicicletas horizontais',
+    'Simuladores de escada',
+  ],
+
   proof: {
     jobs: 'trabalhos concluídos',
     rating: 'de {count} avaliações',
     years: 'de ofício',
     topPro: 'desde {year}',
     source: 'Avaliação e número de trabalhos segundo o {platform}. Verificado e com seguro.',
+  },
+
+  reviews: {
+    eyebrow: 'Avaliações',
+    heading: 'O que escreveram depois',
+    body: 'Cada uma destas foi deixada no {platform} por alguém que pagou pelo serviço. Estão transcritas palavra por palavra — se preferir, leia na fonte.',
+    readOn: 'Ler as {count} no {platform}',
+    empty: 'Aqui entra uma avaliação — transcrita do perfil, com o nome e o mês como estão lá',
+    previous: 'Avaliações anteriores',
+    next: 'Mais avaliações',
   },
 
   lifecycle: {

@@ -1,0 +1,212 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import { business } from '@data/business';
+import { reviews, REVIEW_PLACEHOLDER_COUNT } from '@data/reviews';
+import { getDict, toLocale, fill } from '@i18n/index';
+
+/**
+ * The review carousel.
+ *
+ * NOT FETCHED, AND IT CANNOT BE. Thumbtack publishes no public reviews API, so
+ * nothing here can pull them at runtime; scraping the profile would breach
+ * their terms and this is a static build with no server to run it from. The
+ * reviews are transcribed by hand into src/data/reviews.ts and attributed to
+ * the platform, with a link back so anyone can check them at the source —
+ * which is how every service business shows its platform reviews.
+ *
+ * EMPTY IS AN HONEST STATE. Nothing has been transcribed yet, so this renders
+ * labelled empty cards, the same way the photo and logo slots do. A carousel
+ * of invented praise would be a fake endorsement, and one is enough to cost
+ * him the credibility the real 184 earned.
+ *
+ * NO Review OR aggregateRating MARKUP. These were earned on Thumbtack, not
+ * here. Marking up a third party's reviews on our own business node is
+ * self-serving review markup — ineligible for rich results and a manual-action
+ * risk. They live in visible HTML with the source named.
+ *
+ * The carousel is CSS scroll-snap: it works with no JavaScript at all, by
+ * swipe on a phone and by keyboard on a desktop. The two buttons are an
+ * enhancement that scrolls by one card, and they hide themselves when there is
+ * nothing to scroll.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+const proof = business.socialProof;
+
+const vars = {
+  platform: proof.platform,
+  count: String(proof.reviewCount),
+};
+
+const profileUrl = import.meta.env.PUBLIC_THUMBTACK_URL ?? '';
+const hasReviews = reviews.length > 0;
+const cards = hasReviews ? reviews : Array.from({ length: REVIEW_PLACEHOLDER_COUNT });
+
+/** Month and year in the reader's own language. */
+function formatDate(iso: string): string {
+  const [year, month] = iso.split('-').map(Number);
+  if (!year || !month) return iso;
+  return new Date(year, month - 1, 1).toLocaleDateString(dict.htmlLang, {
+    month: 'long',
+    year: 'numeric',
+  });
+}
+---
+
+<section class="border-t border-line bg-surface-2 py-20 lg:py-28">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow text-accent">{dict.reviews.eyebrow}</p>
+        <h2 class="display display-lg mt-4 text-body">{dict.reviews.heading}</h2>
+        <p class="mt-5 leading-relaxed text-muted">{fill(dict.reviews.body, vars)}</p>
+      </div>
+
+      {
+        /* The controls sit with the heading rather than under the track, so a
+           thumb on a phone is never asked to hit a target beside the thing it
+           is already swiping. */
+      }
+      <div class="flex flex-none gap-2" data-review-controls hidden>
+        <button
+          type="button"
+          data-review-prev
+          aria-label={dict.reviews.previous}
+          class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-strong text-body transition hover:bg-raised"
+        >
+          <Icon name="arrowRight" size={18} class="rotate-180" />
+        </button>
+        <button
+          type="button"
+          data-review-next
+          aria-label={dict.reviews.next}
+          class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-strong text-body transition hover:bg-raised"
+        >
+          <Icon name="arrowRight" size={18} />
+        </button>
+      </div>
+    </div>
+
+    <ul
+      data-review-track
+      tabindex="0"
+      class="review-track mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
+    >
+      {
+        cards.map((_, index) => {
+          const review = hasReviews ? reviews[index] : undefined;
+
+          return (
+            <li
+              class={`w-[85vw] max-w-sm flex-none snap-start rounded-2xl p-6 sm:w-96 ${
+                review
+                  ? 'border border-line bg-raised'
+                  : 'border-2 border-dashed border-line-strong'
+              }`}
+            >
+              {review ? (
+                <>
+                  <div class="flex items-center gap-1" aria-label={`${review.rating} / 5`}>
+                    {Array.from({ length: 5 }).map((_, star) => (
+                      <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
+                        <path
+                          fill={star < review.rating ? '#F5B301' : 'currentColor'}
+                          fill-opacity={star < review.rating ? '1' : '0.18'}
+                          d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
+                        />
+                      </svg>
+                    ))}
+                  </div>
+
+                  <blockquote class="mt-4 leading-relaxed text-body">{review.text}</blockquote>
+
+                  <footer class="mt-5 border-t border-line pt-4 text-sm">
+                    <p class="font-bold text-body">{review.author}</p>
+                    <p class="mt-0.5 text-faint">
+                      {formatDate(review.date)}
+                      {review.job && <span> · {review.job}</span>}
+                    </p>
+                  </footer>
+                </>
+              ) : (
+                <div class="flex h-56 flex-col items-center justify-center text-center">
+                  <p class="text-[0.65rem] font-extrabold tracking-[0.18em] text-faint uppercase">
+                    {proof.platform}
+                  </p>
+                  <p class="mt-3 max-w-[16rem] text-sm leading-relaxed text-muted">
+                    {dict.reviews.empty}
+                  </p>
+                </div>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    {
+      profileUrl && (
+        <a
+          href={profileUrl}
+          target="_blank"
+          rel="noopener"
+          data-cta-placement="reviews-source"
+          class="mt-6 inline-block text-sm font-bold text-accent hover:underline"
+        >
+          {fill(dict.reviews.readOn, vars)} →
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .review-track {
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+
+  .review-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .review-track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Progressive enhancement only. Without this the track is still swipeable
+   * and keyboard-scrollable; the buttons simply stay hidden, which is why they
+   * ship with `hidden` set and are revealed here.
+   */
+  const track = document.querySelector<HTMLElement>('[data-review-track]');
+  const controls = document.querySelector<HTMLElement>('[data-review-controls]');
+
+  if (track && controls) {
+    const overflows = () => track.scrollWidth > track.clientWidth + 4;
+
+    const sync = () => {
+      controls.hidden = !overflows();
+    };
+
+    const step = () => {
+      const card = track.querySelector<HTMLElement>('li');
+      // Fall back to most of a viewport when the card cannot be measured.
+      return card ? card.offsetWidth + 20 : track.clientWidth * 0.8;
+    };
+
+    document
+      .querySelector('[data-review-prev]')
+      ?.addEventListener('click', () => track.scrollBy({ left: -step() }));
+
+    document
+      .querySelector('[data-review-next]')
+      ?.addEventListener('click', () => track.scrollBy({ left: step() }));
+
+    sync();
+    window.addEventListener('resize', sync, { passive: true });
+  }
+</script>

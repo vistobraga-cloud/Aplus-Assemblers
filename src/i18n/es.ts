@@ -39,12 +39,39 @@ export const es: Dict = {
     proofTitle: 'El historial hasta hoy',
   },
 
+  kit: [
+    'Caminadoras',
+    'Elípticas',
+    'Gimnasios en casa',
+    'Racks de potencia',
+    'Bicicletas fijas',
+    'Máquinas de remo',
+    'Entrenadores funcionales',
+    'Máquinas de cable',
+    'Bicicletas de spinning',
+    'Bancos de pesas',
+    'Racks de sentadillas',
+    'Máquinas Smith',
+    'Bicicletas reclinadas',
+    'Escaladoras',
+  ],
+
   proof: {
     jobs: 'trabajos completados',
     rating: 'de {count} reseñas',
     years: 'de experiencia',
     topPro: 'desde {year}',
     source: 'Calificación y número de trabajos según {platform}. Verificado y asegurado.',
+  },
+
+  reviews: {
+    eyebrow: 'Reseñas',
+    heading: 'Lo que escribieron después',
+    body: 'Cada una de estas la dejó en {platform} alguien que pagó por el trabajo. Están transcritas palabra por palabra — si prefiere, léalas en la fuente.',
+    readOn: 'Leer las {count} en {platform}',
+    empty: 'Aquí va una reseña — transcrita del perfil, con el nombre y el mes tal como aparecen',
+    previous: 'Reseñas anteriores',
+    next: 'Más reseñas',
   },
 
   lifecycle: {

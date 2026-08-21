@@ -1,0 +1,75 @@
+---
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * The kit strip: equipment types, in plain text, scrolling under the hero.
+ *
+ * It does a job the logo wall cannot. A logo answers "do you know this
+ * brand"; this answers "do you touch MY machine", which is the question
+ * somebody with an unbranded elliptical is actually asking. It is also the
+ * most legible thing on the page to a search engine, which reads words and
+ * not artwork.
+ *
+ * The list is doubled in the markup and translated by exactly half its width,
+ * so the loop closes seamlessly with no JavaScript and no cloning at runtime.
+ * The second copy is aria-hidden, so a screen reader hears the list once.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+---
+
+<section class="border-y border-line bg-surface-2 py-5" aria-label={dict.brands.heading}>
+  <div class="marquee">
+    <ul class="marquee__track">
+      {
+        [0, 1].map((pass) =>
+          dict.kit.map((item) => (
+            <li
+              class="flex items-center gap-3 text-sm font-semibold whitespace-nowrap text-body"
+              aria-hidden={pass === 1 ? 'true' : undefined}
+            >
+              <span class="h-1.5 w-1.5 flex-none rounded-full bg-accent-soft" />
+              {item}
+            </li>
+          )),
+        )
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    /* Fades both ends so the list reads as continuous rather than as a row
+       that happens to be clipped by the viewport. */
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    gap: 2.5rem;
+    padding-inline: 1.25rem;
+    animation: marquee-scroll 48s linear infinite;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Anyone who asked the OS to calm motion down gets a static list they can
+     still read from the start, and scroll by hand if they want the rest. */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      overflow-x: auto;
+    }
+    .marquee__track {
+      animation: none;
+    }
+  }
+</style>

@@ -41,12 +41,47 @@ export const en = {
     proofTitle: 'The record so far',
   },
 
+  /**
+   * The kit strip under the hero: equipment types in plain text.
+   *
+   * This is the answer to "does he touch mine" that a logo wall cannot give —
+   * somebody owns an off-brand elliptical and needs to see the word
+   * elliptical. It is also the most readable thing on the page for a search
+   * engine, which reads text and not artwork.
+   */
+  kit: [
+    'Treadmills',
+    'Ellipticals',
+    'Home gyms',
+    'Power racks',
+    'Exercise bikes',
+    'Rowers',
+    'Functional trainers',
+    'Cable machines',
+    'Spin bikes',
+    'Weight benches',
+    'Squat racks',
+    'Smith machines',
+    'Recumbent bikes',
+    'Stair climbers',
+  ],
+
   proof: {
     jobs: 'jobs completed',
     rating: 'from {count} reviews',
     years: 'in business',
     topPro: 'since {year}',
     source: 'Ratings and job count from {platform}. Background checked and insured.',
+  },
+
+  reviews: {
+    eyebrow: 'Reviews',
+    heading: 'What people wrote afterwards',
+    body: 'Every one of these was left on {platform} by someone who paid for the work. They are transcribed here word for word — read them at the source if you would rather.',
+    readOn: 'Read all {count} on {platform}',
+    empty: 'Review goes here — transcribed from the profile, with the name and month as written',
+    previous: 'Previous reviews',
+    next: 'More reviews',
   },
 
   lifecycle: {
