@@ -1,0 +1,81 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import { telHref, whatsappHref, phoneDisplay } from '@lib/contact';
+import { getDict, toLocale, fill } from '@i18n/index';
+
+/**
+ * The action pair.
+ *
+ * Green is the only colour on this site that means "press me", so there is
+ * never a second saturated button beside it — the secondary is neutral on
+ * light and translucent white on a deep band. Two equally loud buttons is two
+ * buttons nobody presses.
+ *
+ * `message` is the section's own WhatsApp text, so someone acting from the
+ * business band opens a conversation about a service agreement rather than a
+ * blank thread.
+ */
+interface Props {
+  message: string;
+  placement: string;
+  /** `deep` for the near-black band, which is dark in BOTH themes. */
+  tone?: 'default' | 'deep';
+  /** Optional booking link. When present it leads and the call moves second. */
+  bookHref?: string | undefined;
+  class?: string;
+}
+
+const {
+  message,
+  placement,
+  tone = 'default',
+  bookHref,
+  class: className = '',
+} = Astro.props;
+
+const dict = getDict(toLocale(Astro.currentLocale));
+
+const secondary =
+  tone === 'deep'
+    ? 'border-white/25 bg-white/5 text-white hover:border-white/60 hover:bg-white/15'
+    : 'border-line-strong bg-raised text-body hover:border-body';
+
+const primary =
+  'inline-flex items-center justify-center gap-2.5 rounded-full bg-accent-solid px-7 py-4 text-base font-extrabold text-white shadow-lg transition duration-200 hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0';
+---
+
+<div class={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`}>
+  {
+    bookHref ? (
+      <>
+        <a href={bookHref} data-cta-placement={placement} data-booking-cta class={primary}>
+          <Icon name="calendar" />
+          {dict.hero.primary}
+        </a>
+        <a
+          href={telHref}
+          data-cta-placement={placement}
+          class={`inline-flex items-center justify-center gap-2.5 rounded-full border px-7 py-4 text-base font-bold transition duration-200 hover:-translate-y-0.5 ${secondary}`}
+        >
+          <Icon name="phone" />
+          {fill(dict.hero.call, { phone: phoneDisplay })}
+        </a>
+      </>
+    ) : (
+      <a href={telHref} data-cta-placement={placement} class={primary}>
+        <Icon name="phone" />
+        {fill(dict.hero.call, { phone: phoneDisplay })}
+      </a>
+    )
+  }
+
+  <a
+    href={whatsappHref(message)}
+    data-cta-placement={placement}
+    rel="noopener"
+    class={`inline-flex items-center justify-center gap-2.5 rounded-full border px-7 py-4 text-base font-bold transition duration-200 hover:-translate-y-0.5 ${secondary}`}
+  >
+    <Icon name="whatsapp" />
+    {dict.hero.secondary}
+  </a>
+</div>

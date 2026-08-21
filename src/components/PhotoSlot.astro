@@ -1,0 +1,81 @@
+---
+import { Image } from 'astro:assets';
+import { shots, type ShotId } from '@data/shots';
+
+/**
+ * A reserved space for a photograph that does not exist yet.
+ *
+ * The point is that it is VISIBLE. The previous version of this page removed
+ * every photo-shaped hole and filled the space with type, which produced
+ * something that looked finished, was entirely text, and gave nobody a way to
+ * see what the page would become. A marked hole is more useful than a clever
+ * substitute.
+ *
+ * It also disappears on its own: drop a file named after the shot id into
+ * src/assets/photos/ and this renders the photograph instead, at the same
+ * aspect ratio, with no change to the page.
+ */
+interface Props {
+  shot: ShotId;
+  /** `deep` for the near-black bands, which are dark in both themes. */
+  tone?: 'default' | 'deep';
+  class?: string;
+}
+
+const { shot: shotId, tone = 'default', class: className = '' } = Astro.props;
+const shot = shots[shotId];
+
+const photos = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/photos/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+
+const art =
+  photos[`/src/assets/photos/${shot.id}.jpg`]?.default ??
+  photos[`/src/assets/photos/${shot.id}.jpeg`]?.default ??
+  photos[`/src/assets/photos/${shot.id}.png`]?.default ??
+  photos[`/src/assets/photos/${shot.id}.webp`]?.default;
+
+const skin =
+  tone === 'deep'
+    ? 'border-white/25 bg-white/[0.04] text-white/70'
+    : 'border-line-strong bg-surface-2 text-muted';
+
+const badge = tone === 'deep' ? 'bg-white/10 text-white/80' : 'bg-accent-solid text-white';
+---
+
+{
+  art ? (
+    <Image
+      src={art}
+      alt={shot.label}
+      widths={[400, 800, 1200]}
+      sizes="(min-width: 1024px) 600px, 100vw"
+      loading="lazy"
+      class={`w-full rounded-2xl object-cover ${className}`}
+      style={`aspect-ratio: ${shot.ratio}`}
+    />
+  ) : (
+    <div
+      class={`flex flex-col justify-between rounded-2xl border-2 border-dashed p-5 sm:p-6 ${skin} ${className}`}
+      style={`aspect-ratio: ${shot.ratio}`}
+      data-photo-slot={shot.id}
+    >
+      <div class="flex items-center justify-between gap-3">
+        <span class={`rounded-full px-2.5 py-1 text-[0.65rem] font-extrabold tracking-widest uppercase ${badge}`}>
+          Photo
+        </span>
+        <span class="font-mono text-xs opacity-60">{shot.ratio}</span>
+      </div>
+
+      <div>
+        <p class="text-base leading-snug font-bold sm:text-lg">{shot.label}</p>
+        {shot.note && <p class="mt-2 text-sm leading-relaxed opacity-70">{shot.note}</p>}
+      </div>
+
+      <p class="font-mono text-[0.65rem] tracking-wider uppercase opacity-45">
+        src/assets/photos/{shot.id}.jpg
+      </p>
+    </div>
+  )
+}

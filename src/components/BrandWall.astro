@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets';
+import { equipmentBrands } from '@data/brands';
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * The equipment wall.
+ *
+ * Julio asked for the brands to be shown, and for a service business that is
+ * ordinary and useful: a person with a broken NordicTrack is looking for the
+ * word NordicTrack. What keeps it lawful is what is NOT said — no "authorized",
+ * no "certified", no "partner" — plus the independence statement below, which
+ * sits with the wall rather than hiding in the footer where nobody reads it.
+ *
+ * TWO THEMES, ONE PROBLEM. Brand artwork is nearly always dark ink on
+ * transparency and vanishes on a dark ground. Chasing a white variant of
+ * eighteen marks is not a project worth having, so every mark sits in a chip
+ * that stays light in both themes.
+ *
+ * Logo files are optional. Any brand without one renders as a typographic
+ * chip, so the section is complete before the artwork exists and simply
+ * sharpens when it arrives.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+
+// Eager glob so a present file resolves at build time and an absent one is
+// simply undefined — no per-brand import to keep in sync with the data.
+const logos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/brands/*.{png,svg,webp}', {
+  eager: true,
+});
+
+const wall = equipmentBrands.map((brand) => ({
+  ...brand,
+  art: brand.logo
+    ? (logos[`/src/assets/brands/${brand.logo}.png`]?.default ??
+      logos[`/src/assets/brands/${brand.logo}.svg`]?.default ??
+      logos[`/src/assets/brands/${brand.logo}.webp`]?.default)
+    : undefined,
+}));
+---
+
+<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+  <div class="max-w-2xl">
+    <p class="eyebrow text-accent">{dict.brands.eyebrow}</p>
+    <h2 class="display display-lg mt-4 text-body">{dict.brands.heading}</h2>
+    <p class="mt-5 leading-relaxed text-muted">{dict.brands.body}</p>
+  </div>
+
+  <ul class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    {
+      wall.map((brand) => (
+        <li
+          class={`flex h-20 items-center justify-center rounded-xl px-4 ${
+            brand.art ? 'logo-chip' : 'border-2 border-dashed border-line-strong bg-surface-2'
+          }`}
+        >
+          {brand.art ? (
+            <Image
+              src={brand.art}
+              alt={brand.name}
+              height={28}
+              densities={[1, 2]}
+              loading="lazy"
+              class="max-h-7 w-auto object-contain"
+            />
+          ) : (
+            <span class="text-center">
+              <span class="block text-sm font-bold text-body">{brand.name}</span>
+              <span class="mt-0.5 block text-[0.6rem] font-bold tracking-widest text-faint uppercase">
+                Logo
+              </span>
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    /* Required by scripts/check.mjs: a page that names these marks and does
+       not carry this statement fails the build. */
+  }
+  <p
+    data-brand-disclaimer
+    class="mt-8 max-w-3xl border-l-2 border-line-strong pl-4 text-sm leading-relaxed text-faint"
+  >
+    {dict.brands.disclaimer}
+  </p>
+</section>
+
+<style>
+  /* The chip stays white in both themes, so its text must stay dark in both
+     themes too — the themed token would turn it near-white and invisible. */
+  .text-ink {
+    color: #22262a;
+  }
+</style>

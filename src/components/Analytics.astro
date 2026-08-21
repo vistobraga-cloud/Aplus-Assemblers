@@ -1,0 +1,136 @@
+---
+/**
+ * GA4 and the Meta pixel, plus conversion-click tracking.
+ *
+ * Nothing is emitted for an ID that does not exist — an empty variable
+ * produces no script tag at all, not a disabled one. The click listener is
+ * installed either way and buffers, so an event fired before either library
+ * has finished loading is still delivered once it does.
+ *
+ * BOTH LIBRARIES LOAD LATE, after idle or on the first interaction, whichever
+ * comes first. gtag is roughly 50KB and the pixel is not free either; loading
+ * them in the head would spend the page's speed budget on measurement, on the
+ * exact page where speed is what the advertising is paying for. The ordering
+ * still guarantees the scripts are in flight before anyone can reach a button.
+ *
+ * WHAT CANNOT BE MEASURED, and it matters for how the campaign is set up: the
+ * booking runs in an iframe on Google's domain. No pixel sees a completed
+ * booking there. `Schedule` fires on the click that opens the scheduler, so
+ * Meta optimises toward intent, not toward a confirmed appointment. The real
+ * count is in Julio's calendar.
+ */
+const gaId = import.meta.env.PUBLIC_GA4_ID ?? '';
+const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID ?? '';
+---
+
+<script is:inline define:vars={{ gaId, pixelId }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    window.dataLayer.push(arguments);
+  }
+  window.gtag = gtag;
+
+  /* Queue the pixel so calls made before fbevents.js lands are replayed. */
+  if (pixelId && !window.fbq) {
+    var n = (window.fbq = function () {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    });
+    n.push = n;
+    n.loaded = true;
+    n.version = '2.0';
+    n.queue = [];
+  }
+
+  /* ---- conversion clicks ------------------------------------------------ */
+  /* Calling, WhatsApp and opening the scheduler are the only conversions this
+     page has. Without these there is no way, a month into a campaign, to tell
+     which advertisement actually produced work. */
+
+  var METHODS = [
+    { test: function (h) { return h.indexOf('tel:') === 0; }, method: 'phone' },
+    { test: function (h) { return h.indexOf('sms:') === 0; }, method: 'sms' },
+    { test: function (h) { return h.indexOf('mailto:') === 0; }, method: 'email' },
+    { test: function (h) { return h.indexOf('wa.me') !== -1; }, method: 'whatsapp' },
+  ];
+
+  document.addEventListener(
+    'click',
+    function (event) {
+      var target = event.target;
+      var link = target && target.closest ? target.closest('a[href]') : null;
+      if (!link) return;
+
+      var href = link.getAttribute('href') || '';
+      var placement = link.getAttribute('data-cta-placement') || 'unknown';
+
+      /* Opening the scheduler. Intent, not a confirmed appointment — see the
+         note at the top of this file. */
+      if (link.hasAttribute('data-booking-cta')) {
+        gtag('event', 'schedule_open', { placement: placement, transport_type: 'beacon' });
+        if (window.fbq) window.fbq('track', 'Schedule', { placement: placement });
+        return;
+      }
+
+      for (var i = 0; i < METHODS.length; i++) {
+        if (!METHODS[i].test(href)) continue;
+
+        gtag('event', 'contact_click', {
+          method: METHODS[i].method,
+          link_url: href,
+          page_path: window.location.pathname,
+          placement: placement,
+          transport_type: 'beacon',
+        });
+
+        if (window.fbq) {
+          window.fbq('track', 'Contact', { method: METHODS[i].method, placement: placement });
+        }
+        return;
+      }
+    },
+    true,
+  );
+
+  /* ---- deferred loader -------------------------------------------------- */
+
+  if (gaId || pixelId) {
+    var loaded = false;
+
+    function loadMeasurement() {
+      if (loaded) return;
+      loaded = true;
+
+      if (gaId) {
+        gtag('js', new Date());
+        gtag('config', gaId, { send_page_view: true });
+
+        var ga = document.createElement('script');
+        ga.async = true;
+        ga.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+        document.head.appendChild(ga);
+      }
+
+      if (pixelId) {
+        var fb = document.createElement('script');
+        fb.async = true;
+        fb.src = 'https://connect.facebook.net/en_US/fbevents.js';
+        document.head.appendChild(fb);
+
+        window.fbq('init', pixelId);
+        window.fbq('track', 'PageView');
+      }
+    }
+
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
+      window.addEventListener(type, loadMeasurement, { once: true, passive: true });
+    });
+
+    window.addEventListener('load', function () {
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(loadMeasurement, { timeout: 4000 });
+      } else {
+        setTimeout(loadMeasurement, 2500);
+      }
+    });
+  }
+</script>

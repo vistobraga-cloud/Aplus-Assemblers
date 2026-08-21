@@ -1,0 +1,93 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * Light/dark switch.
+ *
+ * Three states exist, not two: explicit light, explicit dark, and no choice at
+ * all — in which case the OS preference decides and nothing is stored. The
+ * button cycles between the two explicit states; the "no choice" state only
+ * ever exists before the first click.
+ *
+ * The no-flash script that reads localStorage lives in BaseLayout's <head>,
+ * because by the time this component's script runs the page has already
+ * painted once.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+---
+
+<button
+  type="button"
+  id="theme-toggle"
+  aria-label={dict.nav.theme}
+  title={dict.nav.theme}
+  class="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full border border-line text-muted transition hover:border-line-strong hover:text-body"
+>
+  <span class="sr-only" data-theme-label>{dict.nav.theme}</span>
+  <Icon name="sun" size={17} class="hidden dark-only" />
+  <Icon name="moon" size={17} class="light-only" />
+</button>
+
+<style>
+  /*
+   * Which glyph shows is a pure CSS consequence of the theme, so the button is
+   * correct on first paint with no JavaScript involved. Showing the moon in
+   * light mode means the icon reads as "what you will get", which is what
+   * people expect of a theme switch.
+   */
+  .dark-only {
+    display: none;
+  }
+  .light-only {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .dark-only {
+      display: block;
+    }
+    :global(:root:not([data-theme='light'])) .light-only {
+      display: none;
+    }
+  }
+
+  :global(:root[data-theme='dark']) .dark-only {
+    display: block;
+  }
+  :global(:root[data-theme='dark']) .light-only {
+    display: none;
+  }
+
+  :global(:root[data-theme='light']) .dark-only {
+    display: none;
+  }
+  :global(:root[data-theme='light']) .light-only {
+    display: block;
+  }
+</style>
+
+<script>
+  const button = document.getElementById('theme-toggle');
+
+  if (button) {
+    button.addEventListener('click', () => {
+      const root = document.documentElement;
+      const explicit = root.getAttribute('data-theme');
+
+      // With no explicit choice yet, read what the OS is actually giving us so
+      // the first click flips away from what the visitor is looking at rather
+      // than toward it.
+      const current =
+        explicit ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
+
+      root.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        /* Storage blocked; the choice still holds for this page view. */
+      }
+    });
+  }
+</script>

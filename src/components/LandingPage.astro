@@ -1,0 +1,293 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ContactButtons from '@components/ContactButtons.astro';
+import BookingSection from '@components/BookingSection.astro';
+import BrandWall from '@components/BrandWall.astro';
+import ServiceRadiusMap from '@components/ServiceRadiusMap.astro';
+import Faq from '@components/Faq.astro';
+import PhotoSlot from '@components/PhotoSlot.astro';
+import ProofBadge from '@components/ProofBadge.astro';
+import Icon from '@components/icons/Icon.astro';
+
+import { business, countiesByTier, opensDisplay } from '@data/business';
+import { phoneDisplay } from '@lib/contact';
+import { getDict, toLocale, fill } from '@i18n/index';
+import { localBusiness, person, services, faqPage } from '@lib/schema';
+
+/**
+ * The page itself, written once and rendered by all three language routes.
+ *
+ * Every string comes from the dictionary and every number from business.ts, so
+ * `/`, `/es` and `/pt` cannot drift apart in structure — only in words. Adding
+ * a fourth language means adding a dictionary and a route file, and nothing
+ * here changes.
+ */
+const locale = toLocale(Astro.currentLocale);
+const dict = getDict(locale);
+const proof = business.socialProof;
+
+const vars = {
+  radius: `${business.serviceRadius.miles} miles`,
+  base: business.base.locality,
+  years: String(business.operator.yearsInBusiness),
+  phone: phoneDisplay,
+  platform: proof.platform,
+  year: String(proof.topProSince),
+  count: String(proof.reviewCount),
+  opens: opensDisplay,
+};
+
+const bookingUrl = import.meta.env.PUBLIC_BOOKING_URL ?? '';
+// With no scheduler configured yet the hero cannot promise one, so its primary
+// action falls back to the phone rather than scrolling to a section that is
+// itself a fallback.
+const heroBookHref = bookingUrl ? '#booking' : undefined;
+
+const faqItems = dict.faq.items.map((item) => ({ q: item.q, a: fill(item.a, vars) }));
+
+const tiers = [
+  { key: 'core' as const, ...dict.area.tiers.core },
+  { key: 'regular' as const, ...dict.area.tiers.regular },
+  { key: 'edge' as const, ...dict.area.tiers.edge },
+];
+
+const schemaNodes = [localBusiness(dict), person(), ...services(dict), faqPage(faqItems)];
+
+/**
+ * One photo per lifecycle stage, in the order the stages render.
+ *
+ * Positional rather than keyed off `stage.key`, because the stage keys live in
+ * the language files and a translator should never be able to break the
+ * pairing by touching a string.
+ */
+const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'moving'] as const;
+---
+
+<BaseLayout title={dict.meta.title} description={dict.meta.description} schemaNodes={schemaNodes}>
+  <!-- Hero -->
+  <section class="band-deep relative overflow-hidden">
+    <div class="relative mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 lg:pt-20 lg:pb-24">
+      <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
+        <div class="lg:col-span-7">
+          <p class="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1 text-brand-300">
+            {
+              dict.hero.eyebrow.map((item, index) => (
+                <>
+                  {index > 0 && <span aria-hidden="true" class="on-deep-faint">/</span>}
+                  <span>{fill(item, vars)}</span>
+                </>
+              ))
+            }
+          </p>
+
+          <h1 class="display display-xl on-deep mt-6">
+            {dict.hero.headingLead}
+            <span class="block text-brand-300">{dict.hero.headingAccent}</span>
+          </h1>
+
+          <p class="on-deep-muted mt-7 max-w-xl text-lg leading-relaxed">{dict.hero.body}</p>
+
+          <ContactButtons
+            message={dict.whatsapp.general}
+            placement="hero"
+            tone="deep"
+            bookHref={heroBookHref}
+            class="mt-9"
+          />
+        </div>
+
+        {
+          /* The photograph goes here, and until it exists the space says so.
+             An earlier version filled this with a panel of numbers, which read
+             as finished and left nobody able to see what the page would
+             actually become. */
+        }
+        <div class="lg:col-span-5 lg:pl-6">
+          <PhotoSlot shot="hero" tone="deep" />
+        </div>
+      </div>
+
+      {
+        /* Proof sits under the fold line as a badge rather than a row of
+           figures. "4.9" on its own is a number the visitor has to take on
+           faith; the same figure wearing the platform that issued it is
+           evidence, and Top Pro is a status Thumbtack awards rather than
+           something we can assert. */
+      }
+      <div class="mt-14 border-t border-white/15 pt-8">
+        <p class="eyebrow on-deep-faint">{dict.hero.proofTitle}</p>
+        <ProofBadge tone="deep" class="mt-5" />
+        <p class="on-deep-faint mt-6 max-w-2xl text-sm leading-relaxed">
+          {fill(dict.proof.source, vars)}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- The lifecycle -->
+  <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4">
+        <p class="eyebrow text-accent">{dict.lifecycle.eyebrow}</p>
+        <h2 class="display display-lg mt-4 text-body">{dict.lifecycle.heading}</h2>
+        <p class="mt-5 leading-relaxed text-muted">{dict.lifecycle.body}</p>
+      </div>
+
+      {
+        /* A numbered sequence rather than five equal cards. The stages happen
+           in this order to the same machine, and a grid of identical tiles
+           would say they are five unrelated products. */
+      }
+      <ol class="lg:col-span-8">
+        {
+          dict.lifecycle.stages.map((stage, index) => (
+            <li class="grid grid-cols-[2.5rem_1fr] gap-x-5 gap-y-5 border-t border-line py-7 sm:grid-cols-[3.5rem_1fr] lg:grid-cols-[3.5rem_1fr_11rem]">
+              <span class="display pt-1 text-lg text-accent tabular-nums">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <p class="eyebrow text-faint">{stage.name}</p>
+                <h3 class="display mt-1.5 text-2xl text-body sm:text-3xl">{stage.title}</h3>
+                <p class="mt-3 max-w-2xl leading-relaxed text-muted">{stage.body}</p>
+              </div>
+
+              {
+                /* One square per stage. Five small, specific photographs of
+                   the actual work do more here than one big generic one —
+                   they are also the easiest thing for Julio to shoot, because
+                   each is something he already does every week. */
+              }
+              <PhotoSlot
+                shot={stageShots[index]!}
+                class="col-start-2 max-w-xs lg:col-start-3 lg:max-w-none"
+              />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Brands -->
+  <BrandWall />
+
+  <!-- For businesses -->
+  <section class="band-deep">
+    <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+      <div class="grid gap-14 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-5">
+          <p class="eyebrow flex items-center gap-2 text-brand-300">
+            <Icon name="buildings" size={14} />
+            {dict.businesses.eyebrow}
+          </p>
+          <h2 class="display display-lg on-deep mt-5">{dict.businesses.heading}</h2>
+          <p class="on-deep-muted mt-6 leading-relaxed">{dict.businesses.body}</p>
+
+          <ContactButtons
+            message={dict.businesses.whatsapp}
+            placement="business-band"
+            tone="deep"
+            class="mt-9"
+          />
+        </div>
+
+        <div class="lg:col-span-7">
+        <PhotoSlot shot="commercial" tone="deep" class="mb-8" />
+        <dl class="grid gap-px overflow-hidden rounded-3xl bg-white/10 sm:grid-cols-2">
+          {
+            dict.businesses.points.map((point, index) => (
+              <div class="bg-[#1b2118] p-7 sm:p-8">
+                <span class="display text-sm text-brand-300 tabular-nums">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <dt class="on-deep mt-3 text-lg font-bold">{point.title}</dt>
+                <dd class="on-deep-muted mt-2.5 text-sm leading-relaxed">{point.body}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The weight problem -->
+  <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-accent">{dict.weight.eyebrow}</p>
+        <h2 class="display display-lg mt-4 text-body">{dict.weight.heading}</h2>
+      </div>
+      <div class="lg:col-span-7">
+        <div class="space-y-5">
+          {dict.weight.body.map((paragraph) => <p class="text-lg leading-relaxed text-muted">{paragraph}</p>)}
+        </div>
+        <PhotoSlot shot="curb" class="mt-9" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking -->
+  <BookingSection />
+
+  <!-- Service area -->
+  <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+    <div class="grid gap-14 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-accent">{dict.area.eyebrow}</p>
+        <h2 class="display display-lg mt-4 text-body">{fill(dict.area.heading, vars)}</h2>
+        <p class="mt-5 leading-relaxed text-muted">{dict.area.body}</p>
+        <p class="mt-4 leading-relaxed text-muted italic">{dict.area.edgeNote}</p>
+      </div>
+
+      <div class="lg:col-span-7">
+        <ServiceRadiusMap class="hidden md:block" />
+
+        <div class="space-y-8 md:mt-12">
+          {
+            tiers.map((tier) => (
+              <div>
+                <div class="flex flex-wrap items-baseline gap-x-3 border-b border-line pb-3">
+                  <h3 class="font-bold text-body">{tier.title}</h3>
+                  <span class="text-sm text-faint">{tier.range}</span>
+                </div>
+                <ul class="mt-4 space-y-2">
+                  {countiesByTier[tier.key].map((county) => (
+                    <li class="text-sm">
+                      <span class="font-bold text-muted">
+                        {county.name}, {county.state}
+                      </span>
+                      <span class="ml-2 text-faint">{county.towns.slice(0, 4).join(' · ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-line bg-surface-2">
+    <div class="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:py-28">
+      <Faq items={faqItems} heading={dict.faq.heading} />
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class="band-deep overflow-hidden rounded-[1.75rem] px-7 py-12 sm:px-12 sm:py-16">
+      <h2 class="display display-md on-deep max-w-2xl">{dict.finalCta.heading}</h2>
+      <p class="on-deep-muted mt-5 max-w-2xl text-lg leading-relaxed">{dict.finalCta.body}</p>
+      <ContactButtons
+        message={dict.whatsapp.general}
+        placement="page-bottom"
+        tone="deep"
+        bookHref={heroBookHref}
+        class="mt-9"
+      />
+    </div>
+  </section>
+</BaseLayout>

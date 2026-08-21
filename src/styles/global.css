@@ -1,0 +1,302 @@
+@import 'tailwindcss';
+
+/*
+ * Self-hosted type. Two files, latin subset, 61KB total, from a stable path so
+ * the layout can preload them. Never a <link> to Google Fonts — that is an
+ * extra origin and a third-party dependency on the critical path, and this is
+ * a page paid traffic lands on.
+ *
+ * Archivo sets the display line, Manrope everything under it.
+ *
+ * The display face was Fraunces, a serif, and it was the single thing that
+ * made this read as an editorial piece rather than a page that sells a
+ * service. A high-contrast serif at display size is a magazine signal; the
+ * work being sold here is a van pulling into a driveway. Archivo is a grotesk
+ * built for signage-grade clarity at weight, which is what a headline has to
+ * do in a phone-sized feed.
+ */
+@font-face {
+  font-family: 'Archivo Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 900;
+  src: url('/fonts/archivo-latin-variable.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('/fonts/manrope-latin-variable.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Theme                                                                      */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Two layers, on purpose.
+ *
+ *   --app-*   the semantic tokens. These SWAP between light and dark, and are
+ *             the only thing a template should reach for: surface, text,
+ *             border, accent. A component never names a colour.
+ *
+ *   @theme    maps each semantic token to a Tailwind colour so `bg-surface`,
+ *             `text-muted` and friends exist as utilities. The indirection
+ *             through var() is what lets a static utility class resolve to a
+ *             different value once the theme flips at runtime.
+ *
+ * The raw palette below the semantic block stays fixed in both themes and is
+ * only used where a value genuinely must not move — the accent ramp, and the
+ * white a filled button prints on.
+ */
+
+:root {
+  color-scheme: light;
+
+  --app-surface: #f7f4ef;
+  --app-surface-2: #ebe5db;
+  --app-raised: #ffffff;
+  --app-inverse: #12160f;
+
+  --app-text: #22262a;
+  --app-text-muted: #585e65;
+  /* Darkened from #6f767d, which measured 4.19:1 on this background — under
+     the 4.5 minimum for normal text. This clears 4.6. */
+  --app-text-faint: #666d74;
+
+  --app-border: rgb(34 38 42 / 0.11);
+  --app-border-strong: rgb(34 38 42 / 0.22);
+
+  /* Accent that carries TEXT. Needs 4.5:1 on --app-surface. */
+  --app-accent: #325c35;
+  /* Accent that FILLS a button, printing white. Needs 4.5:1 with white. */
+  --app-accent-solid: #3d7440;
+  --app-accent-solid-hover: #325c35;
+  /* The quiet accent used for eyebrows and rules. */
+  --app-accent-soft: #4f8f4f;
+
+  --app-shadow: rgb(16 33 15 / 0.18);
+}
+
+/*
+ * System preference, but only while the visitor has not chosen for themselves.
+ * The :not() guard is what lets an explicit "light" beat a dark OS setting.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --app-surface: #12160f;
+    --app-surface-2: #1b2118;
+    --app-raised: #1e251b;
+    --app-inverse: #f7f4ef;
+
+    --app-text: #f2f4ef;
+    --app-text-muted: #b6bdb2;
+    --app-text-faint: #8d958a;
+
+    --app-border: rgb(255 255 255 / 0.13);
+    --app-border-strong: rgb(255 255 255 / 0.26);
+
+    /* Brand green at 500 fails on a near-black ground; 300 clears 9:1. */
+    --app-accent: #97c799;
+    --app-accent-solid: #4f8f4f;
+    --app-accent-solid-hover: #6aab6d;
+    --app-accent-soft: #97c799;
+
+    --app-shadow: rgb(0 0 0 / 0.5);
+  }
+}
+
+/* The explicit choice wins in both directions. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --app-surface: #12160f;
+  --app-surface-2: #1b2118;
+  --app-raised: #1e251b;
+  --app-inverse: #f7f4ef;
+
+  --app-text: #f2f4ef;
+  --app-text-muted: #b6bdb2;
+  --app-text-faint: #8d958a;
+
+  --app-border: rgb(255 255 255 / 0.13);
+  --app-border-strong: rgb(255 255 255 / 0.26);
+
+  --app-accent: #97c799;
+  --app-accent-solid: #4f8f4f;
+  --app-accent-solid-hover: #6aab6d;
+  --app-accent-soft: #97c799;
+
+  --app-shadow: rgb(0 0 0 / 0.5);
+}
+
+@theme {
+  --font-sans: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Semantic — these move with the theme. */
+  --color-surface: var(--app-surface);
+  --color-surface-2: var(--app-surface-2);
+  --color-raised: var(--app-raised);
+  --color-inverse: var(--app-inverse);
+
+  --color-body: var(--app-text);
+  --color-muted: var(--app-text-muted);
+  --color-faint: var(--app-text-faint);
+
+  --color-line: var(--app-border);
+  --color-line-strong: var(--app-border-strong);
+
+  --color-accent: var(--app-accent);
+  --color-accent-solid: var(--app-accent-solid);
+  --color-accent-soft: var(--app-accent-soft);
+
+  /* Fixed — the brand ramp, for the few places a value must not move. */
+  --color-brand-100: #e0efe0;
+  --color-brand-300: #97c799;
+  --color-brand-400: #6aab6d;
+  --color-brand-500: #4f8f4f;
+  --color-brand-600: #3d7440;
+  --color-brand-700: #325c35;
+  --color-brand-900: #243d27;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  :where(a, button, summary, input, textarea, select):focus-visible {
+    outline: 3px solid var(--app-accent-soft);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /*
+   * The display face, applied by class rather than to every h1/h2, because
+   * plenty of h2s are small UI labels that should stay in Manrope.
+   * Optical sizing keeps the serifs from turning into a slab as size grows.
+   */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.028em;
+    line-height: 1.02;
+  }
+
+  .display-xl {
+    font-size: clamp(2.4rem, 5vw, 4.25rem);
+  }
+
+  .display-lg {
+    font-size: clamp(1.95rem, 3.4vw, 2.875rem);
+  }
+
+  .display-md {
+    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /*
+   * The deep band. In light mode it is a near-black panel that gives the page
+   * somewhere to go; in dark mode the page is already dark, so it lifts very
+   * slightly instead of dropping — otherwise the section would vanish into
+   * the background and the layout would lose its rhythm entirely.
+   */
+  .band-deep {
+    background-color: #14401f;
+    color: #f4f7f2;
+    background-image:
+      radial-gradient(ellipse 80% 70% at 8% -15%, rgb(122 196 122 / 0.22), transparent 68%),
+      radial-gradient(ellipse 60% 60% at 98% 4%, rgb(0 0 0 / 0.28), transparent 70%);
+  }
+
+  :root[data-theme='dark'] .band-deep {
+    background-color: #10321a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .band-deep {
+      background-color: #10321a;
+    }
+  }
+
+  /* Text that sits on .band-deep, which is dark in BOTH themes. */
+  .on-deep {
+    color: #f4f7f2;
+  }
+  .on-deep-muted {
+    color: rgb(244 247 242 / 0.76);
+  }
+  .on-deep-faint {
+    color: rgb(244 247 242 / 0.58);
+  }
+
+  /*
+   * Brand logos are almost always dark artwork on transparency, so they
+   * disappear on a dark ground. Rather than hunt down a white variant of
+   * seven marks, each sits in a chip that stays light in both themes.
+   */
+  .logo-chip {
+    background-color: #ffffff;
+    border: 1px solid rgb(34 38 42 / 0.1);
+  }
+
+  /* The sticky mobile bar overlaps the end of the document. */
+  .has-sticky-bar {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .has-sticky-bar {
+      padding-bottom: 0;
+    }
+  }
+}

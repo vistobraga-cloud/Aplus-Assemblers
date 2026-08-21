@@ -1,0 +1,166 @@
+---
+import { business } from '@data/business';
+import { getDict, toLocale, fill } from '@i18n/index';
+
+/**
+ * The service area, drawn.
+ *
+ * Not a map — a map means tiles, an external host and an API key, and this
+ * page carries no third-party request except the scheduler. This is a distance
+ * diagram: rings at 15, 35 and 50 miles from Fall River with real towns placed
+ * at their true bearing and distance. It answers "does he come out to me" in
+ * about a second, which is the only question this section exists to answer.
+ *
+ * Positions are computed from bearing and distance rather than hand-placed, so
+ * the picture cannot drift away from the numbers it claims to show, and the
+ * radius comes from business.ts like every other fact.
+ *
+ * Colours are theme tokens, so the diagram inverts with the page instead of
+ * becoming a white box in dark mode.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+const dict = getDict(toLocale(Astro.currentLocale));
+
+const CX = 260;
+const CY = 262;
+/** Pixels per mile, chosen so the 50-mile ring lands at r = 180. */
+const SCALE = 3.6;
+
+/** Bearing in degrees clockwise from north, and straight-line miles out. */
+const places = [
+  { name: 'Taunton', miles: 13, bearing: 340 },
+  { name: 'New Bedford', miles: 15, bearing: 150 },
+  { name: 'Providence', miles: 18, bearing: 295 },
+  { name: 'Newport', miles: 20, bearing: 200 },
+  { name: 'Brockton', miles: 30, bearing: 355 },
+  { name: 'Warwick', miles: 30, bearing: 265 },
+  { name: 'Plymouth', miles: 35, bearing: 70 },
+  { name: 'Quincy', miles: 40, bearing: 20 },
+  { name: 'Boston', miles: 50, bearing: 15 },
+  { name: 'Worcester', miles: 50, bearing: 312 },
+  { name: 'New London', miles: 58, bearing: 250, beyond: true },
+  { name: 'Hyannis', miles: 55, bearing: 115, beyond: true },
+];
+
+const rings = [15, 35, 50];
+
+const plotted = places.map((place) => {
+  const rad = (place.bearing * Math.PI) / 180;
+  const x = CX + place.miles * SCALE * Math.sin(rad);
+  const y = CY - place.miles * SCALE * Math.cos(rad);
+  // Labels flip side at the centre line so they never run back over the dot.
+  const right = x >= CX;
+  return { ...place, x, y, labelX: right ? x + 9 : x - 9, anchor: right ? 'start' : 'end' };
+});
+---
+
+<figure class={className}>
+  <svg viewBox="0 0 520 500" role="img" aria-labelledby="radius-title" class="h-auto w-full">
+    <title id="radius-title">
+      {fill(dict.area.heading, { radius: `${business.serviceRadius.miles} miles`, base: business.base.locality })}
+    </title>
+
+    <defs>
+      <radialGradient id="radius-fill" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="var(--app-accent-soft)" stop-opacity="0.2" />
+        <stop offset="100%" stop-color="var(--app-accent-soft)" stop-opacity="0.04" />
+      </radialGradient>
+    </defs>
+
+    <circle cx={CX} cy={CY} r={50 * SCALE} fill="url(#radius-fill)" />
+
+    {
+      rings.map((miles) => (
+        <circle
+          cx={CX}
+          cy={CY}
+          r={miles * SCALE}
+          fill="none"
+          stroke={miles === 50 ? 'var(--app-accent-soft)' : 'var(--app-border-strong)'}
+          stroke-width={miles === 50 ? 2 : 1}
+          stroke-dasharray={miles === 50 ? undefined : '3 5'}
+        />
+      ))
+    }
+
+    {
+      /* Mileage ticks run due south, the one bearing with no town on it, and
+         carry a halo in the page colour so the ring does not strike through
+         them. */
+    }
+    {
+      rings.map((miles) => (
+        <text
+          x={CX + 7}
+          y={CY + miles * SCALE - 6}
+          font-size="11"
+          font-weight="700"
+          fill="var(--app-text-faint)"
+          stroke="var(--app-surface)"
+          stroke-width="3.5"
+          paint-order="stroke"
+        >
+          {miles} mi
+        </text>
+      ))
+    }
+
+    {
+      plotted.map((place) => (
+        <>
+          <circle
+            cx={place.x}
+            cy={place.y}
+            r={place.beyond ? 3 : 4}
+            fill={place.beyond ? 'var(--app-text-faint)' : 'var(--app-accent)'}
+          />
+          <text
+            x={place.labelX}
+            y={place.y + 4}
+            text-anchor={place.anchor}
+            font-size="12.5"
+            font-weight={place.beyond ? '500' : '700'}
+            fill={place.beyond ? 'var(--app-text-faint)' : 'var(--app-text)'}
+            stroke="var(--app-surface)"
+            stroke-width="3.5"
+            paint-order="stroke"
+          >
+            {place.name}
+          </text>
+        </>
+      ))
+    }
+
+    <circle cx={CX} cy={CY} r={9} fill="var(--app-accent-soft)" />
+    <circle
+      cx={CX}
+      cy={CY}
+      r={15}
+      fill="none"
+      stroke="var(--app-accent-soft)"
+      stroke-width="1.5"
+      stroke-opacity="0.45"
+    />
+    <text
+      x={CX + 22}
+      y={CY + 5}
+      font-size="13"
+      font-weight="800"
+      fill="var(--app-text)"
+      stroke="var(--app-surface)"
+      stroke-width="4"
+      paint-order="stroke"
+    >
+      {business.base.locality}
+    </text>
+  </svg>
+
+  <figcaption class="mt-3 text-sm text-faint">
+    {fill(dict.area.caption, { base: business.base.locality })}
+  </figcaption>
+</figure>

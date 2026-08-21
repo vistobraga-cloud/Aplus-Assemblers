@@ -1,0 +1,41 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import { telHref, whatsappHref, phoneDisplay } from '@lib/contact';
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * Mobile-only action bar.
+ *
+ * Facebook and Instagram traffic is overwhelmingly phones, and the visitor is
+ * usually standing next to the machine they are asking about. Calling is the
+ * shortest distance between that person and a booked job, so calling gets the
+ * big button — not a form, and not a scroll back to the top.
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+---
+
+<div
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/90 backdrop-blur-md md:hidden"
+  style="padding-bottom: env(safe-area-inset-bottom)"
+>
+  <div class="grid grid-cols-3 gap-2 p-2.5">
+    <a
+      href={telHref}
+      data-cta-placement="sticky-bar"
+      class="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-accent-solid px-4 py-3.5 text-base font-extrabold text-white shadow-lg"
+    >
+      <Icon name="phone" size={17} />
+      {phoneDisplay}
+    </a>
+
+    <a
+      href={whatsappHref(dict.whatsapp.general)}
+      data-cta-placement="sticky-bar"
+      rel="noopener"
+      class="inline-flex items-center justify-center gap-1.5 rounded-full border border-line-strong bg-raised px-3 py-3.5 text-sm font-bold text-body"
+    >
+      <Icon name="whatsapp" size={17} />
+      WhatsApp
+    </a>
+  </div>
+</div>

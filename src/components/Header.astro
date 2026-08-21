@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import logo from '@assets/brand/logo.png';
+
+import Icon from '@components/icons/Icon.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
+import LangSwitcher from '@components/LangSwitcher.astro';
+
+import { business } from '@data/business';
+import { telHref, phoneDisplay } from '@lib/contact';
+import { getDict, toLocale, localePath } from '@i18n/index';
+
+/**
+ * Header for a page paid traffic lands on.
+ *
+ * No navigation menu, deliberately. Every nav link on an advertising landing
+ * page is an exit that is not the call button — the visitor arrived from an
+ * advertisement with one thing in mind, and the page has one thing to offer.
+ * What is here is only what a visitor needs to act or to read: the mark, the
+ * language, the theme, and the number.
+ */
+const locale = toLocale(Astro.currentLocale);
+const dict = getDict(locale);
+---
+
+<header class="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-md">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2 sm:px-6 sm:py-2.5">
+    <a href={localePath(locale, '/')} class="flex-none" aria-label={business.name}>
+      <Image
+        src={logo}
+        alt={`${business.name} logo`}
+        width={112}
+        height={44}
+        densities={[1, 2]}
+        loading="eager"
+        class="h-9 w-auto sm:h-11"
+      />
+    </a>
+
+    <div class="flex flex-none items-center gap-2">
+      <LangSwitcher class="hidden sm:block" />
+      <ThemeToggle />
+
+      <a
+        href={telHref}
+        data-cta-placement="header"
+        class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full bg-accent-solid px-4 py-2 text-sm font-extrabold text-white shadow-md transition hover:opacity-90 sm:px-5"
+      >
+        <Icon name="phone" size={15} />
+        <span class="hidden sm:inline">{phoneDisplay}</span>
+        <span class="sm:hidden">{dict.nav.call}</span>
+      </a>
+    </div>
+  </div>
+
+  {
+    /* On a phone the language switcher moves to its own line rather than
+       competing with the call button for thumb width. It stays visible
+       instead of hiding in a menu — someone who needs Spanish needs to see
+       that Spanish exists without hunting for it. */
+  }
+  <div class="flex items-center justify-end border-t border-line px-4 py-1.5 sm:hidden">
+    <LangSwitcher />
+  </div>
+</header>

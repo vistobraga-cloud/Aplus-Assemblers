@@ -1,0 +1,118 @@
+---
+import { business } from '@data/business';
+import { getDict, toLocale, fill } from '@i18n/index';
+
+/**
+ * The Thumbtack proof, as a badge.
+ *
+ * It used to be four numbers in a row — 325, 4.9, 10, Top Pro — which is data,
+ * not proof. A number nobody can attribute is a claim the visitor has to take
+ * on faith; the same number wearing the platform that issued it is evidence.
+ * Top Pro is a status Thumbtack awards and the rating is a figure it publishes,
+ * so naming the source is both the honest move and the persuasive one.
+ *
+ * The stars are drawn from the rating rather than hardcoded, so the mark can
+ * never say four and a half while the data says 4.9.
+ *
+ * Deliberately NOT schema.org aggregateRating: these reviews were earned on
+ * Thumbtack, not here, and marking up a third party's ratings on our own
+ * business node is self-serving review markup.
+ */
+interface Props {
+  /** `deep` for the brand field, which is dark in both themes. */
+  tone?: 'default' | 'deep';
+  class?: string;
+}
+
+const { tone = 'default', class: className = '' } = Astro.props;
+
+const dict = getDict(toLocale(Astro.currentLocale));
+const proof = business.socialProof;
+
+const vars = {
+  platform: proof.platform,
+  count: String(proof.reviewCount),
+  year: String(proof.topProSince),
+  years: String(business.operator.yearsInBusiness),
+};
+
+const full = Math.floor(proof.rating);
+const hasHalf = proof.rating - full >= 0.25;
+
+const shell =
+  tone === 'deep'
+    ? 'border-white/20 bg-white/[0.07] text-[#f4f7f2]'
+    : 'border-line-strong bg-raised text-body';
+
+const quiet = tone === 'deep' ? 'text-[#f4f7f2]/62' : 'text-faint';
+const rule = tone === 'deep' ? 'bg-white/15' : 'bg-line-strong';
+
+/** The figures that ride beside the badge. */
+const facts = [
+  { value: String(proof.jobsCompleted), label: dict.proof.jobs },
+  { value: vars.years, label: dict.proof.years },
+];
+---
+
+<div class={`flex flex-wrap items-stretch gap-4 ${className}`}>
+  {/* The badge itself: platform, stars, rating, Top Pro. */}
+  <div class={`flex items-center gap-4 rounded-2xl border px-5 py-4 ${shell}`}>
+    <div>
+      <p class="text-[0.68rem] font-extrabold tracking-[0.16em] uppercase opacity-70">
+        {proof.platform}
+      </p>
+
+      <div class="mt-1.5 flex items-center gap-2">
+        <span class="display text-2xl tabular-nums">{proof.rating}</span>
+
+        <span
+          class="flex items-center gap-0.5"
+          role="img"
+          aria-label={fill(dict.proof.rating, vars)}
+        >
+          {
+            Array.from({ length: 5 }).map((_, index) => (
+              <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
+                <defs>
+                  <linearGradient id={`star-${tone}-${index}`}>
+                    <stop
+                      offset={index < full ? '100%' : index === full && hasHalf ? '50%' : '0%'}
+                      stop-color="#F5B301"
+                    />
+                    <stop
+                      offset={index < full ? '100%' : index === full && hasHalf ? '50%' : '0%'}
+                      stop-color="currentColor"
+                      stop-opacity="0.22"
+                    />
+                  </linearGradient>
+                </defs>
+                <path
+                  fill={`url(#star-${tone}-${index})`}
+                  d="M10 1.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.6 4.8 17.5 6 11.7 1.6 7.7l5.9-.7z"
+                />
+              </svg>
+            ))
+          }
+        </span>
+      </div>
+
+      <p class={`mt-1 text-xs ${quiet}`}>{fill(dict.proof.rating, vars)}</p>
+    </div>
+
+    <div class={`w-px self-stretch ${rule}`} aria-hidden="true"></div>
+
+    <div>
+      <p class="display text-lg leading-none">Top&nbsp;Pro</p>
+      <p class={`mt-1.5 text-xs ${quiet}`}>{fill(dict.proof.topPro, vars)}</p>
+    </div>
+  </div>
+
+  {
+    facts.map((fact) => (
+      <div class={`flex flex-col justify-center rounded-2xl border px-5 py-4 ${shell}`}>
+        <p class="display text-2xl tabular-nums">{fact.value}</p>
+        <p class={`mt-0.5 text-xs ${quiet}`}>{fact.label}</p>
+      </div>
+    ))
+  }
+</div>

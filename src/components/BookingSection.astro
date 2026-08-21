@@ -1,0 +1,123 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import PhotoSlot from '@components/PhotoSlot.astro';
+import ContactButtons from '@components/ContactButtons.astro';
+
+import { opensDisplay, slotHours } from '@data/business';
+import { telHref, phoneDisplay } from '@lib/contact';
+import { getDict, toLocale, fill } from '@i18n/index';
+
+/**
+ * The scheduler: Julio's own Google Calendar appointment page.
+ *
+ * This replaces a four-step form that reserved nothing. Google checks the
+ * calendar for conflicts, so a slot that is taken never appears — which is
+ * the one thing the hand-built version could not do — and the appointment
+ * lands in Julio's calendar rather than depending on a `mailto:` that may
+ * silently open nothing.
+ *
+ * The 2-hour blocks starting at 8am are configured by Julio inside Google.
+ * The numbers in the copy come from business.ts so the page describes what is
+ * actually set up rather than repeating a figure that could drift.
+ *
+ * DEGRADATION. `PUBLIC_BOOKING_URL` may be empty — the calendar is not live
+ * yet, and a free Google account allows only one booking page. With no URL
+ * the section becomes phone and WhatsApp rather than an empty frame. The page
+ * is never broken by a variable that has not been filled in.
+ *
+ * MEASUREMENT LIMIT, worth knowing before spending on advertising: the
+ * booking runs inside an iframe on Google's domain. No pixel can observe a
+ * completed booking in there. The click on the booking control is trackable;
+ * the booking itself is verified in Julio's calendar.
+ */
+const bookingUrl = import.meta.env.PUBLIC_BOOKING_URL ?? '';
+const dict = getDict(toLocale(Astro.currentLocale));
+
+const vars = {
+  slotHours: String(slotHours),
+  opens: opensDisplay,
+  phone: phoneDisplay,
+};
+
+// Google's own embed parameter. Appending it to a shared booking link is what
+// turns the page into an embeddable view.
+const embedUrl = bookingUrl
+  ? `${bookingUrl}${bookingUrl.includes('?') ? '&' : '?'}gv=true`
+  : '';
+---
+
+<section id="booking" class="border-y border-line bg-surface-2 scroll-mt-24">
+  <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <p class="eyebrow text-accent">{dict.booking.eyebrow}</p>
+
+        {
+          bookingUrl ? (
+            <>
+              <h2 class="display display-lg mt-4 text-body">{dict.booking.heading}</h2>
+              <p class="mt-5 leading-relaxed text-muted">{fill(dict.booking.body, vars)}</p>
+              <p class="mt-4 leading-relaxed text-muted">{dict.booking.note}</p>
+
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener"
+                data-cta-placement="booking-open"
+                data-booking-cta
+                class="mt-8 inline-flex items-center justify-center gap-2.5 rounded-full bg-accent-solid px-7 py-4 text-base font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:opacity-90"
+              >
+                <Icon name="calendar" />
+                {dict.booking.openInGoogle}
+              </a>
+
+              <p class="mt-5 text-sm text-faint">
+                <a href={telHref} data-cta-placement="booking-aside" class="font-semibold underline">
+                  {fill(dict.hero.call, vars)}
+                </a>
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 class="display display-lg mt-4 text-body">{dict.booking.fallbackHeading}</h2>
+              <p class="mt-5 leading-relaxed text-muted">{dict.booking.fallbackBody}</p>
+              <ContactButtons
+                message={dict.whatsapp.booking}
+                placement="booking-fallback"
+                class="mt-8"
+              />
+            </>
+          )
+        }
+      </div>
+
+      {
+        !bookingUrl && (
+          <div class="lg:col-span-7">
+            <PhotoSlot shot="portrait" class="mx-auto max-w-sm lg:max-w-md" />
+          </div>
+        )
+      }
+
+      {
+        bookingUrl && (
+          <div class="lg:col-span-7">
+            <div class="overflow-hidden rounded-2xl border border-line bg-white">
+              {/* Google's booking page ships its own light styling and cannot
+                  follow this site's theme, so the frame keeps a white ground
+                  in both themes rather than showing a light panel floating in
+                  a dark one. */}
+              <iframe
+                src={embedUrl}
+                title={dict.booking.heading}
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                class="h-[600px] w-full border-0"
+              />
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

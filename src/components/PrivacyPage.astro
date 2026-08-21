@@ -1,0 +1,59 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+import { business } from '@data/business';
+import { telHref, mailtoHref, phoneDisplay } from '@lib/contact';
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * Privacy policy, in all three languages.
+ *
+ * Not optional decoration: Meta requires a reachable privacy policy on a
+ * landing page it sends paid traffic to, and this page carries both Google
+ * Analytics and the Meta pixel, so there is something real to disclose.
+ *
+ * Kept out of the sitemap by the filter in astro.config.mjs — it needs to
+ * exist and be linked, not to rank.
+ */
+const locale = toLocale(Astro.currentLocale);
+const dict = getDict(locale);
+
+// The date the copy last changed, written once. Formatted per language so a
+// Spanish reader is not handed an American date order.
+const UPDATED = new Date('2026-08-20');
+const updatedDisplay = UPDATED.toLocaleDateString(dict.htmlLang, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={dict.privacy.title} description={dict.privacy.description}>
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
+    <h1 class="display display-lg text-body">{dict.privacy.heading}</h1>
+    <p class="mt-4 text-sm text-faint">{dict.privacy.updated}: {updatedDisplay}</p>
+
+    <div class="mt-12 space-y-10">
+      {
+        dict.privacy.body.map((block) => (
+          <div>
+            <h2 class="display text-xl text-body sm:text-2xl">{block.heading}</h2>
+            <p class="mt-3 leading-relaxed text-muted">{block.text}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-12 rounded-2xl border border-line bg-surface-2 p-6">
+      <p class="font-bold text-body">{business.name}</p>
+      <p class="mt-2 text-sm text-muted">
+        <a href={telHref} class="font-semibold text-accent hover:underline">{phoneDisplay}</a>
+        <span class="mx-2 text-faint">·</span>
+        <a href={mailtoHref} class="hover:underline">{business.email}</a>
+      </p>
+      <p class="mt-2 text-sm text-faint">
+        {business.base.locality}, {business.base.region}
+      </p>
+    </div>
+  </section>
+</BaseLayout>

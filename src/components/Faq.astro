@@ -1,0 +1,48 @@
+---
+import Icon from '@components/icons/Icon.astro';
+
+/**
+ * FAQ accordion on native <details>.
+ *
+ * Every answer stays in the DOM whether the item is open or shut. That is the
+ * requirement, not a detail: Google must be able to read the answer in the
+ * rendered HTML, and the FAQPage JSON-LD must never claim an answer the page
+ * does not actually contain. It also means zero JavaScript, keyboard operation
+ * for free, and no component library.
+ */
+interface Props {
+  items: { q: string; a: string }[];
+  heading: string;
+  class?: string;
+}
+
+const { items, heading, class: className = '' } = Astro.props;
+---
+
+<section class={className}>
+  <h2 class="display display-md text-body">{heading}</h2>
+
+  <div class="mt-8 divide-y divide-line border-y border-line">
+    {
+      items.map((item, index) => (
+        <details class="group" open={index === 0}>
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-4 py-5 text-left text-lg font-bold text-body transition marker:content-none hover:text-accent">
+            <span>{item.q}</span>
+            <Icon
+              name="chevronDown"
+              size={16}
+              class="mt-1.5 flex-none text-faint transition-transform duration-200 group-open:rotate-180"
+            />
+          </summary>
+          <p class="max-w-2xl pb-6 leading-relaxed text-muted">{item.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

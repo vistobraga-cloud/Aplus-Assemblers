@@ -1,0 +1,84 @@
+---
+import Icon from '@components/icons/Icon.astro';
+import { alternates, neutralPath, toLocale, getDict } from '@i18n/index';
+
+/**
+ * Language switcher.
+ *
+ * Built on <details>, so it opens and closes with no JavaScript and works
+ * from the keyboard for free. The links are real links to real URLs, which
+ * matters twice over: a crawler can follow them, and a visitor who lands on
+ * the Spanish page from a Spanish advertisement can still get to English.
+ *
+ * Each link keeps the current route — someone reading the privacy page in
+ * Portuguese who switches to Spanish lands on the Spanish privacy page, not
+ * back at the top of the site.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+const locale = toLocale(Astro.currentLocale);
+const dict = getDict(locale);
+const route = neutralPath(Astro.url.pathname);
+const options = alternates(route);
+---
+
+<details class={`lang relative ${className}`}>
+  <summary
+    aria-label={dict.nav.language}
+    class="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-line px-3 py-2 text-sm font-bold text-muted transition marker:content-none hover:border-line-strong hover:text-body"
+  >
+    <Icon name="globe" size={15} />
+    <span class="uppercase">{locale}</span>
+  </summary>
+
+  <ul
+    class="absolute right-0 z-40 mt-2 min-w-40 overflow-hidden rounded-xl border border-line bg-raised py-1 shadow-lg"
+  >
+    {
+      options.map((option) => (
+        <li>
+          <a
+            href={option.path}
+            hreflang={getDict(option.locale).htmlLang}
+            lang={getDict(option.locale).htmlLang}
+            aria-current={option.locale === locale ? 'true' : undefined}
+            class="block px-4 py-2.5 text-sm font-semibold text-muted transition hover:bg-surface-2 hover:text-body aria-[current]:text-accent"
+          >
+            {option.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</details>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
+
+<script>
+  /*
+   * Close on outside click and on Escape. Without this the panel stays open
+   * once tapped on a phone, which reads as broken. Twelve lines is a fair
+   * price; a dropdown library would not be.
+   */
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    document.querySelectorAll<HTMLDetailsElement>('details.lang[open]').forEach((panel) => {
+      if (!panel.contains(target)) panel.open = false;
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    document.querySelectorAll<HTMLDetailsElement>('details.lang[open]').forEach((panel) => {
+      panel.open = false;
+    });
+  });
+</script>
