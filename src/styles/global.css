@@ -60,29 +60,43 @@
 :root {
   color-scheme: light;
 
-  --app-surface: #f7f4ef;
-  --app-surface-2: #ebe5db;
+  --app-surface: #f2f6f8;
+  --app-surface-2: #e2eaef;
   --app-raised: #ffffff;
-  --app-inverse: #12160f;
+  --app-inverse: #0d1620;
 
-  --app-text: #22262a;
-  --app-text-muted: #585e65;
-  /* Darkened from #6f767d, which measured 4.19:1 on this background — under
-     the 4.5 minimum for normal text. This clears 4.6. */
-  --app-text-faint: #666d74;
+  --app-text: #1d2530;
+  --app-text-muted: #54606c;
+  /* Both of these are set against --app-surface, not guessed: normal text
+     needs 4.5:1 and these were adjusted until they measured over it. */
+  --app-text-faint: #616d79;
 
-  --app-border: rgb(34 38 42 / 0.11);
-  --app-border-strong: rgb(34 38 42 / 0.22);
+  --app-border: rgb(29 37 48 / 0.11);
+  --app-border-strong: rgb(29 37 48 / 0.22);
 
-  /* Accent that carries TEXT. Needs 4.5:1 on --app-surface. */
-  --app-accent: #325c35;
-  /* Accent that FILLS a button, printing white. Needs 4.5:1 with white. */
+  /*
+   * Accent that carries TEXT. Needs 4.5:1 on --app-surface.
+   *
+   * This is the logo's own blue, taken unmodified. The wordmark "assemblers"
+   * is #207097 and it had never been used anywhere on the site — the whole
+   * palette was built from the green half of a two-colour mark. It measures
+   * about 5:1 here, so it needs no adjusting.
+   */
+  --app-accent: #207097;
+  /*
+   * Accent that FILLS a button, printing white. Needs 4.5:1 with white.
+   * STAYS GREEN. The bands went blue and the buttons did not, which is the
+   * point: a green button on a blue band separates from its own background in
+   * a way a green button on a green band never did.
+   */
   --app-accent-solid: #3d7440;
   --app-accent-solid-hover: #325c35;
-  /* The quiet accent used for eyebrows and rules. */
+  /* The quiet accent. Also green, and load-bearing: it draws the radius
+     circle, the centre dot and the fill in ServiceRadiusMap, plus the
+     focus-visible outline. */
   --app-accent-soft: #4f8f4f;
 
-  --app-shadow: rgb(16 33 15 / 0.18);
+  --app-shadow: rgb(13 30 45 / 0.18);
 
   /*
    * Thumbtack's own colours, sampled off Julio's live profile: the green they
@@ -114,20 +128,21 @@
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --app-surface: #12160f;
-    --app-surface-2: #1b2118;
-    --app-raised: #1e251b;
-    --app-inverse: #f7f4ef;
+    --app-surface: #0d1219;
+    --app-surface-2: #141d26;
+    --app-raised: #18222d;
+    --app-inverse: #f2f6f8;
 
-    --app-text: #f2f4ef;
-    --app-text-muted: #b6bdb2;
-    --app-text-faint: #8d958a;
+    --app-text: #eef3f7;
+    --app-text-muted: #b0bcc7;
+    --app-text-faint: #8794a1;
 
     --app-border: rgb(255 255 255 / 0.13);
     --app-border-strong: rgb(255 255 255 / 0.26);
 
-    /* Brand green at 500 fails on a near-black ground; 300 clears 9:1. */
-    --app-accent: #97c799;
+    /* The logo blue at full strength goes muddy on a near-black ground, so
+       the text accent lifts to a tint of it. Solid and soft stay green. */
+    --app-accent: #7dc4e8;
     --app-accent-solid: #4f8f4f;
     --app-accent-solid-hover: #6aab6d;
     --app-accent-soft: #97c799;
@@ -148,19 +163,19 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --app-surface: #12160f;
-  --app-surface-2: #1b2118;
-  --app-raised: #1e251b;
-  --app-inverse: #f7f4ef;
+  --app-surface: #0d1219;
+  --app-surface-2: #141d26;
+  --app-raised: #18222d;
+  --app-inverse: #f2f6f8;
 
-  --app-text: #f2f4ef;
-  --app-text-muted: #b6bdb2;
-  --app-text-faint: #8d958a;
+  --app-text: #eef3f7;
+  --app-text-muted: #b0bcc7;
+  --app-text-faint: #8794a1;
 
   --app-border: rgb(255 255 255 / 0.13);
   --app-border-strong: rgb(255 255 255 / 0.26);
 
-  --app-accent: #97c799;
+  --app-accent: #7dc4e8;
   --app-accent-solid: #4f8f4f;
   --app-accent-solid-hover: #6aab6d;
   --app-accent-soft: #97c799;
@@ -280,26 +295,39 @@
   }
 
   /*
-   * The deep band. In light mode it is a near-black panel that gives the page
-   * somewhere to go; in dark mode the page is already dark, so it lifts very
-   * slightly instead of dropping — otherwise the section would vanish into
-   * the background and the layout would lose its rhythm entirely.
+   * The deep band — the hero, the businesses section, and the final CTA panel.
+   * In light mode it is a deep panel that gives the page somewhere to go; in
+   * dark mode the page is already dark, so it lifts very slightly instead of
+   * dropping — otherwise the section would vanish into the background and the
+   * layout would lose its rhythm entirely.
+   *
+   * It was green. It is the logo's blue now, darkened from #207097 to #17506c
+   * — and the darkening is required, not taste: on the raw logo blue the
+   * .on-deep-muted text (white at 76%) measures about 3.9:1, under the 4.5
+   * minimum, and at #17506c it clears comfortably.
+   *
+   * The name still says "deep", not "green", so it did not need renaming.
+   *
+   * What deliberately stays green on top of this: the buttons, and the
+   * brand-300 accents in the hero and businesses eyebrows. A green button on a
+   * blue band is the whole reason for the change — on the old green band it
+   * competed with its own background.
    */
   .band-deep {
-    background-color: #14401f;
+    background-color: #17506c;
     color: #f4f7f2;
     background-image:
-      radial-gradient(ellipse 80% 70% at 8% -15%, rgb(122 196 122 / 0.22), transparent 68%),
+      radial-gradient(ellipse 80% 70% at 8% -15%, rgb(96 168 208 / 0.24), transparent 68%),
       radial-gradient(ellipse 60% 60% at 98% 4%, rgb(0 0 0 / 0.28), transparent 70%);
   }
 
   :root[data-theme='dark'] .band-deep {
-    background-color: #10321a;
+    background-color: #113a50;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) .band-deep {
-      background-color: #10321a;
+      background-color: #113a50;
     }
   }
 
@@ -310,8 +338,15 @@
   .on-deep-muted {
     color: rgb(244 247 242 / 0.76);
   }
+  /*
+   * Raised from 0.58 when the band went from green to blue. The old green was
+   * much darker, so 0.58 still cleared 4.5:1 on it; on the lighter blue the
+   * same alpha measured 3.88 and failed. This carries real copy — the
+   * Thumbtack attribution line under the hero proof badge — not just the
+   * decorative separators, so it has to pass.
+   */
   .on-deep-faint {
-    color: rgb(244 247 242 / 0.58);
+    color: rgb(244 247 242 / 0.72);
   }
 
   /*
