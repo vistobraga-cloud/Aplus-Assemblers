@@ -3,8 +3,8 @@
  *
  * TRADEMARK POSITION. Every name here is somebody else's registered mark, used
  * to identify the equipment serviced. That is nominative use, and it holds
- * while two things stay true — both of which scripts/check.mjs enforces rather
- * than trusting anyone to remember:
+ * while two things stay true. Nothing checks them automatically any more, so
+ * they are on whoever edits this file:
  *
  *   1. The independence statement renders on every page that shows these.
  *   2. The words "authorized", "certified", "official" and "partner" appear

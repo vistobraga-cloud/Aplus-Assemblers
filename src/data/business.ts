@@ -71,8 +71,9 @@ const businessSchema = z.object({
 
   /**
    * Only what is confirmed. Julio holds no Massachusetts HIC registration and
-   * the site must never imply one — scripts/check.mjs fails the build on any
-   * claim it is not entitled to make.
+   * the site must never imply one, in any language: no "licensed and insured",
+   * no "con licencia", no "licenciado". Insured and background checked are
+   * true and may be said.
    */
   credentials: z.object({ insured: z.literal(true), backgroundChecked: z.literal(true) }),
 
