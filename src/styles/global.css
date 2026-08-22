@@ -276,15 +276,15 @@
   }
 
   .display-xl {
-    font-size: clamp(2.4rem, 5vw, 4.25rem);
+    font-size: clamp(2.75rem, 7vw, 5.5rem);
   }
 
   .display-lg {
-    font-size: clamp(1.95rem, 3.4vw, 2.875rem);
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
   }
 
   .display-md {
-    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+    font-size: clamp(1.85rem, 3.4vw, 2.6rem);
   }
 
   .eyebrow {
@@ -445,7 +445,7 @@
     background-color: #ffffff;
     background-image: linear-gradient(170deg, #ffffff 0%, #f7fbfd 100%);
     color: #22262a;
-    border: 1px solid rgb(34 38 42 / 0.07);
+    border: 0;
     box-shadow:
       0 1px 2px rgb(3 32 45 / 0.14),
       0 18px 36px -20px rgb(3 32 45 / 0.5);
@@ -606,5 +606,129 @@
     .has-sticky-bar {
       padding-bottom: 0;
     }
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Motion, driven by the scroll itself                                        */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * One authored moment for the whole page, not a hover effect per component.
+ *
+ * This is CSS scroll-driven animation: `animation-timeline: view()` ties the
+ * animation's progress to the element's own travel through the viewport, so
+ * the browser runs it on the compositor with no scroll listener, no
+ * IntersectionObserver, and no JavaScript at all. It is the reason this page
+ * can move like something built in 2026 while still shipping the same 8KB.
+ *
+ * EVERYTHING DEFAULTS TO VISIBLE. The keyframes only exist inside @supports,
+ * so a browser without scroll timelines renders the finished state and nobody
+ * ever sees a blank section. That is also why the reveal never animates
+ * opacity from a stylesheet rule outside the guard.
+ *
+ * The blur is doing real work: a reveal that only moves and fades reads as a
+ * slide, and a reveal that also resolves focus reads as something arriving.
+ */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal-in linear both;
+        animation-timeline: view();
+        animation-range: entry 2% cover 20%;
+      }
+
+      /* Children stagger against the same timeline as their parent, so a row
+         of cards arrives as a row rather than as five unrelated events. */
+      .reveal-stagger > * {
+        animation: reveal-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 18%;
+      }
+
+      .reveal-stagger > *:nth-child(2) {
+        animation-range: entry 0% cover 22%;
+      }
+      .reveal-stagger > *:nth-child(3) {
+        animation-range: entry 0% cover 26%;
+      }
+      .reveal-stagger > *:nth-child(4) {
+        animation-range: entry 0% cover 30%;
+      }
+      .reveal-stagger > *:nth-child(n + 5) {
+        animation-range: entry 0% cover 34%;
+      }
+    }
+
+    /*
+     * The hero photograph drifts and settles as the page leaves it. Tied to the
+     * document scroll rather than the element's own view, because the hero is
+     * already at the top when the page loads and has no entry to animate.
+     */
+    @supports (animation-timeline: scroll()) {
+      .hero-drift {
+        animation: hero-drift linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 85vh;
+        will-change: transform;
+      }
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(0, 3%, 0);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  The surfaces the browser draws, which ship with no design system           */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Selection, caret, scrollbar and numerals arrive from the user agent wearing
+ * nobody's brand. Theming them is the cheapest signal that a page was built
+ * rather than assembled, and the one most reliably skipped.
+ */
+::selection {
+  background-color: var(--app-accent-solid);
+  color: #ffffff;
+}
+
+@layer base {
+  html {
+    scrollbar-color: var(--app-border-strong) transparent;
+    scrollbar-width: thin;
+    caret-color: var(--app-accent);
+  }
+
+  /* A figure that changes should not shift the ones beside it. */
+  .tabular,
+  time,
+  [data-count] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  a:not([class]) {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 0.08em;
   }
 }

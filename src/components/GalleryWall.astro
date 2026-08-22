@@ -68,14 +68,13 @@ const wall = await Promise.all(
 );
 ---
 
-<section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
+<section class="reveal mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
   <div class="max-w-2xl">
-    <p class="eyebrow text-accent">{dict.gallery.eyebrow}</p>
-    <h2 class="display display-lg mt-4 text-body">{dict.gallery.heading}</h2>
+    <h2 class="display display-lg text-body">{dict.gallery.heading}</h2>
     <p class="mt-5 leading-relaxed text-muted">{dict.gallery.body}</p>
   </div>
 
-  <ul class="masonry mt-10">
+  <ul class="masonry reveal-stagger mt-10">
     {
       wall.map((item) => (
         <li class="masonry__item">
@@ -136,7 +135,7 @@ const wall = await Promise.all(
   <button type="button" data-gallery-close class="gallery-dialog__close" aria-label={dict.nav.close}>
     <Icon name="close" size={20} />
   </button>
-  <img data-gallery-image alt="" />
+  <div data-gallery-frame class="gallery-dialog__frame"></div>
   <p data-gallery-text class="gallery-dialog__caption"></p>
 </dialog>
 
@@ -266,7 +265,14 @@ const wall = await Promise.all(
     background-color: rgb(3 12 20 / 0.82);
   }
 
-  .gallery-dialog img {
+  /*
+   * :global is load-bearing. Astro scopes a component's styles with a
+   * data attribute stamped on elements the template renders, and this image is
+   * created by the script, so it carries no such attribute. Without the escape
+   * the max-height never applies and a tall photograph opens taller than the
+   * window.
+   */
+  .gallery-dialog__frame :global(img) {
     display: block;
     width: 100%;
     max-height: 78vh;
@@ -323,10 +329,17 @@ const wall = await Promise.all(
    * tile is still a photograph with its caption on it, just not openable.
    */
   const dialog = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
-  const image = document.querySelector<HTMLImageElement>('[data-gallery-image]');
+  const frame = document.querySelector<HTMLElement>('[data-gallery-frame]');
   const text = document.querySelector<HTMLElement>('[data-gallery-text]');
 
-  if (dialog && image && text) {
+  if (dialog && frame && text) {
+    // Built here rather than shipped in the markup: an image element with no source is a
+    // broken-image box for as long as it exists, and this one has nothing to
+    // show until somebody picks a photograph.
+    const image = new Image();
+    image.decoding = 'async';
+    frame.append(image);
+
     document.querySelectorAll<HTMLElement>('[data-gallery-open]').forEach((tile) => {
       tile.addEventListener('click', () => {
         const full = tile.dataset.full;
