@@ -39,9 +39,9 @@ export const shots = {
   },
   installation: {
     id: 'installation',
-    label: 'Machine coming off the pallet, or partly built',
+    label: 'The manual, the hardware and the tools laid out before anything is bolted',
     ratio: '1/1',
-    note: 'Tools and packaging in frame. Work in progress reads more honest than a finished room.',
+    note: 'The photograph that arrived is the bench before the build, not the machine coming off the pallet. It says the same thing: this is a job with a method.',
   },
   maintenance: {
     id: 'maintenance',
@@ -57,9 +57,9 @@ export const shots = {
   },
   moving: {
     id: 'moving',
-    label: 'Dismantled machine with bagged and labelled hardware',
+    label: 'Hardware sorted and grouped on the bench, ready to be bagged',
     ratio: '1/1',
-    note: 'The labels are the point. It is what separates him from two guys and a van.',
+    note: 'The sorting is the point. It is what separates him from two guys and a van.',
   },
   curb: {
     id: 'curb',
