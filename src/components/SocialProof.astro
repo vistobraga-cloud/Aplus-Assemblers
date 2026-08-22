@@ -71,6 +71,36 @@ const facts = [
   { value: vars.years, label: dict.proof.years },
 ];
 
+/**
+ * The initials disc.
+ *
+ * Thumbtack shows a reviewer's name as "Shawn M." and nothing else, so there
+ * is no photograph to use and inventing one would be inventing a person. Two
+ * letters and a colour is what is honestly available.
+ *
+ * The tint is derived from the name so it is stable between builds and varies
+ * down the row. Every value in the set measures at least 5:1 on its own tinted
+ * disc, measured against that disc and not against white: #0175a3 and
+ * #1a7a5c both failed there at 4.30 and 4.42 and were darkened, and #4f8f4f
+ * never made the set at 3.9.
+ */
+const AVATAR_TINTS = ['#016489', '#176d52', '#3d7440', '#2b6a8f'] as const;
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((part) => part[0] ?? '')
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function tintFor(name: string): string {
+  let hash = 0;
+  for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return AVATAR_TINTS[hash % AVATAR_TINTS.length]!;
+}
+
 /** Month and year in the reader's own language. */
 function formatDate(iso: string): string {
   const [year, month] = iso.split('-').map(Number);
@@ -178,7 +208,7 @@ function formatDate(iso: string): string {
 
             return (
               <li
-                class={`flex w-[85vw] max-w-sm flex-none snap-start flex-col rounded-2xl p-6 sm:w-96 ${
+                class={`flex w-[85vw] max-w-sm flex-none snap-start flex-col rounded-2xl p-5 sm:w-96 ${
                   review ? 'review-card' : 'border-2 border-dashed border-white/30'
                 }`}
               >
@@ -188,11 +218,11 @@ function formatDate(iso: string): string {
                         it are a single claim and should not be read apart. */}
                     <div class="flex items-center justify-between gap-3">
                       <div
-                        class="tt-star flex items-center gap-1"
+                        class="tt-star flex items-center gap-0.5"
                         aria-label={`${review.rating} / 5`}
                       >
                         {Array.from({ length: 5 }).map((_, star) => (
-                          <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true">
+                          <svg viewBox="0 0 20 20" class="h-[1.05rem] w-[1.05rem]" aria-hidden="true">
                             <path
                               fill="currentColor"
                               fill-opacity={star < review.rating ? '1' : '0.18'}
@@ -201,21 +231,31 @@ function formatDate(iso: string): string {
                           </svg>
                         ))}
                       </div>
-                      <span class="tt-chip rounded-full px-2.5 py-1 text-[0.6rem] font-extrabold tracking-[0.12em] uppercase">
+                      <span class="tt-verified inline-flex items-center gap-1 rounded-full px-2 py-1 text-[0.6rem] font-extrabold tracking-[0.1em] uppercase">
+                        <Icon name="check" size={11} />
                         {proof.platform}
                       </span>
                     </div>
 
-                    <blockquote class="review-quote mt-4 leading-relaxed">{review.text}</blockquote>
+                    <blockquote class="review-quote mt-4 text-[1.0625rem]">{review.text}</blockquote>
 
                     {/* mt-auto pins every footer to the bottom, so the row of
                         cards shares one baseline however long the quote is. */}
-                    <footer class="mt-auto border-t border-[rgb(34_38_42/0.10)] pt-4 text-sm">
-                      <p class="font-bold">{review.author}</p>
-                      <p class="review-card-meta mt-0.5">
-                        {formatDate(review.date)}
-                        {review.job && <span> · {review.job}</span>}
-                      </p>
+                    <footer class="mt-auto flex items-center gap-3 border-t border-[rgb(34_38_42/0.09)] pt-4">
+                      <span
+                        class="review-avatar flex h-10 w-10 flex-none items-center justify-center rounded-full text-xs font-extrabold tracking-wide"
+                        style={`color: ${tintFor(review.author)}`}
+                        aria-hidden="true"
+                      >
+                        {initials(review.author)}
+                      </span>
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-bold">{review.author}</p>
+                        <p class="review-card-meta truncate text-xs">
+                          {formatDate(review.date)}
+                          {review.job && <span> · {review.job}</span>}
+                        </p>
+                      </div>
                     </footer>
                   </>
                 ) : (
