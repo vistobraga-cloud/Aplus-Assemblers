@@ -78,6 +78,32 @@ const schemaNodes = [localBusiness(dict), person(), ...services(dict), faqPage(f
  * pairing by touching a string.
  */
 const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'moving'] as const;
+
+/**
+ * Five stages, four sections.
+ *
+ * Julio asked for a menu that scrolls to what he does, and for him that is
+ * four things: maintenance and repair are one job with two names. They keep
+ * their own titles and their own copy inside the section they now share, so
+ * nothing was rewritten to make them fit — they simply stop being two stops
+ * on the menu.
+ *
+ * Grouped by the stage keys the dictionary already carries, so a translator
+ * cannot break the grouping by touching a string.
+ */
+const SERVICE_GROUPS = [
+  ['consulting'],
+  ['installation'],
+  ['maintenance', 'repair'],
+  ['moving'],
+] as const;
+
+const serviceSections = SERVICE_GROUPS.map((keys) => ({
+  /* The anchor, and the photo slot name, come from the first stage. */
+  id: keys[0],
+  stages: keys.map((key) => dict.lifecycle.stages.find((stage) => stage.key === key)!),
+  shots: keys,
+}));
 ---
 
 <BaseLayout title={dict.meta.title} description={dict.meta.description} schemaNodes={schemaNodes}>
@@ -185,41 +211,58 @@ const stageShots = ['consulting', 'installation', 'maintenance', 'repair', 'movi
       </div>
 
       {
-        /* A numbered sequence rather than five equal cards. The stages happen
+        /* A numbered sequence rather than four equal cards. The stages happen
            in this order to the same machine, and a grid of identical tiles
-           would say they are five unrelated products. */
+           would say they are four unrelated products.
+
+           Each is its own <section> with its own id, because the header menu
+           scrolls to them. scroll-mt clears the sticky header; the value is
+           measured against its real height, not guessed. */
       }
-      <ol class="reveal-stagger lg:col-span-8">
+      <div class="lg:col-span-8">
         {
-          dict.lifecycle.stages.map((stage, index) => (
-            <li class="grid grid-cols-[2.5rem_1fr] gap-x-5 gap-y-5 border-t border-line py-7 sm:grid-cols-[3.5rem_1fr] lg:grid-cols-[3.5rem_1fr_11rem]">
+          serviceSections.map((service, index) => (
+            <section
+              id={service.id}
+              class="service reveal grid scroll-mt-32 grid-cols-[2.5rem_1fr] gap-x-5 gap-y-5 border-t border-line py-7 sm:grid-cols-[3.5rem_1fr] lg:grid-cols-[3.5rem_1fr_11rem]"
+            >
               <span class="display pt-1 text-lg text-accent tabular-nums">
                 {String(index + 1).padStart(2, '0')}
               </span>
+
               <div>
-                <h3 class="display text-2xl text-body sm:text-3xl">
-                  {stage.title}
-                  <span class="mt-1 block text-sm font-bold tracking-[0.14em] text-faint uppercase">
-                    {stage.name}
-                  </span>
-                </h3>
-                <p class="mt-3 max-w-2xl leading-relaxed text-muted">{stage.body}</p>
+                {/* The section's own name, which is what the menu says. Two
+                    stages share one section, so their names join on a middle
+                    dot: the three languages link with three different words
+                    and a dot needs none of them. */}
+                <p class="text-sm font-bold tracking-[0.14em] text-faint uppercase">
+                  {service.stages.map((stage) => stage.name).join(' · ')}
+                </p>
+
+                {service.stages.map((stage, stageIndex) => (
+                  <div class={stageIndex > 0 ? 'mt-7' : 'mt-2'}>
+                    <h3 class="display text-2xl text-body sm:text-3xl">{stage.title}</h3>
+                    <p class="mt-3 max-w-2xl leading-relaxed text-muted">{stage.body}</p>
+                  </div>
+                ))}
               </div>
 
               {
-                /* One square per stage. Five small, specific photographs of
-                   the actual work do more here than one big generic one —
-                   they are also the easiest thing for Julio to shoot, because
-                   each is something he already does every week. */
+                /* One square per stage, so the section that carries two
+                   carries two. Small, specific photographs of the actual work
+                   do more here than one big generic one, and they are the
+                   easiest thing for Julio to shoot: each is something he
+                   already does every week. */
               }
-              <PhotoSlot
-                shot={stageShots[index]!}
-                class="col-start-2 max-w-xs lg:col-start-3 lg:max-w-none"
-              />
-            </li>
+              <div class="col-start-2 flex max-w-xs flex-col gap-3 lg:col-start-3 lg:max-w-none">
+                {service.shots.map((shot) => (
+                  <PhotoSlot shot={shot} />
+                ))}
+              </div>
+            </section>
           ))
         }
-      </ol>
+      </div>
     </div>
   </section>
 

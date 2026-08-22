@@ -1,0 +1,182 @@
+---
+import { getDict, toLocale } from '@i18n/index';
+
+/**
+ * The service menu.
+ *
+ * The header used to carry a comment explaining why this did not exist: every
+ * navigation link on an advertising landing page is an exit that is not the
+ * call button. That reasoning holds for links that LEAVE. These are anchors —
+ * they scroll within the page a visitor already landed on, and the call button
+ * stays in the header above them and in the sticky bar below.
+ *
+ * FOUR ITEMS, NOT FIVE. Maintenance and repair are one job with two names, so
+ * they share a section and a stop on the menu. The grouping lives in
+ * LandingPage's SERVICE_GROUPS; this component only needs to agree with it.
+ *
+ * A SCROLLING ROW, NOT A DRAWER. The project already made this call for the
+ * language switcher: it stays visible rather than hiding in a menu. Four short
+ * labels fit a row that slides on a phone, and a drawer would cost JavaScript
+ * and two taps to reach a link that is one tap away here.
+ *
+ * The active mark is an IntersectionObserver rather than :target, because
+ * :target only reacts to a click and never to the visitor scrolling past a
+ * section on their own. Without it the menu is a list of links that never
+ * answers "where am I".
+ */
+const dict = getDict(toLocale(Astro.currentLocale));
+
+/** Must match SERVICE_GROUPS in LandingPage.astro. */
+const GROUPS = [['consulting'], ['installation'], ['maintenance', 'repair'], ['moving']];
+
+const items = GROUPS.map((keys) => ({
+  id: keys[0],
+  label: keys
+    .map((key) => dict.lifecycle.stages.find((stage) => stage.key === key)?.name ?? key)
+    .join(' · '),
+}));
+---
+
+<nav aria-label={dict.lifecycle.heading} class="service-nav">
+  <ul class="service-nav__row">
+    {
+      items.map((item) => (
+        <li>
+          <a href={`#${item.id}`} data-service-link={item.id} class="service-nav__link">
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .service-nav {
+    /* The row slides on a phone rather than wrapping to a second line or
+       hiding behind a button. The mask tells the thumb there is more to the
+       right without spending a pixel on an arrow. */
+    overflow-x: auto;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
+  }
+
+  .service-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .service-nav {
+      overflow-x: visible;
+      mask-image: none;
+    }
+  }
+
+  .service-nav__row {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: 0.35rem;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .service-nav__row {
+      width: auto;
+      justify-content: center;
+      gap: 0.5rem;
+      padding-inline: 0;
+    }
+  }
+
+  .service-nav__link {
+    display: block;
+    white-space: nowrap;
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--app-text-muted);
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  @media (hover: hover) {
+    .service-nav__link:hover {
+      background-color: var(--app-surface-2);
+      color: var(--app-text);
+    }
+  }
+
+  /*
+   * Colour alone never carries state: the active item gets a filled ground,
+   * so it survives a colour-blind reader and a bright screen.
+   *
+   * The fill is brand-600 rather than --app-accent-solid. That token swaps to
+   * a lighter green on dark, where white on it measures 3.91 against a 4.5
+   * minimum, and this label is 12.8px so it has no large-text exemption.
+   * brand-600 is fixed in both themes and clears 5.57.
+   */
+  .service-nav__link[aria-current] {
+    background-color: #3d7440;
+    color: #ffffff;
+  }
+</style>
+
+<script>
+  /*
+   * Marks the service currently on screen. Progressive enhancement: with the
+   * script blocked the links still scroll, they just never highlight.
+   */
+  const links = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>('[data-service-link]').forEach((link) => {
+    if (link.dataset.serviceLink) links.set(link.dataset.serviceLink, link);
+  });
+
+  const sections = [...links.keys()]
+    .map((id) => document.getElementById(id))
+    .filter((section): section is HTMLElement => section !== null);
+
+  const mark = (id: string | null) => {
+    links.forEach((link, key) => {
+      if (id && key === id) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  /*
+   * Clicking marks immediately, without waiting for the observer below.
+   *
+   * Two reasons. The observer only reports once the scroll settles, so the
+   * menu would lag its own click by the length of a smooth scroll. And where
+   * IntersectionObserver does not run at all, this path still answers "where
+   * am I" for the interaction the menu exists to serve.
+   */
+  links.forEach((link, id) => {
+    link.addEventListener('click', () => mark(id));
+  });
+
+  if (sections.length > 0) {
+    const visible = new Set<string>();
+
+    // The topmost visible section wins, so scrolling through two at once
+    // never leaves both lit.
+    const paint = () => mark(sections.find((section) => visible.has(section.id))?.id ?? null);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        });
+        paint();
+      },
+      // Ignores the band under the sticky header and the bottom third, so the
+      // mark tracks what is being read rather than what is merely on screen.
+      { rootMargin: '-30% 0px -45% 0px' },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>
