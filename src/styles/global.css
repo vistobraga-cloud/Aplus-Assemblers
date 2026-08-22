@@ -275,12 +275,22 @@
     line-height: 1.02;
   }
 
+  /*
+   * Sized against the real headline, not against a number that sounded bold.
+   * At 7vw capped at 88px this wrapped to eight lines in the hero column and
+   * pushed the hero past the viewport; the copy is 54 characters and no
+   * display size survives that in a narrow column. 4.4vw capped at 62px lands
+   * it in three or four lines from a phone to a wide desktop. The ceiling
+   * matters as much as the floor: the container caps at 1152px, so above that
+   * the column stops growing while vw keeps pushing the type, and the line
+   * count climbs again.
+   */
   .display-xl {
-    font-size: clamp(2.75rem, 7vw, 5.5rem);
+    font-size: clamp(2.1rem, 4.4vw, 3.5rem);
   }
 
   .display-lg {
-    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-size: clamp(1.95rem, 3.6vw, 3rem);
   }
 
   .display-md {
