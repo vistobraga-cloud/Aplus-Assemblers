@@ -24,6 +24,7 @@ export const en = {
     book: 'Book a slot',
     call: 'Call',
     skipToContent: 'Skip to content',
+    close: 'Close',
     language: 'Language',
     theme: 'Switch theme',
     themeToLight: 'Switch to light theme',

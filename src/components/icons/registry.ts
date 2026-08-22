@@ -20,6 +20,7 @@ export const icons = {
   globe: 'ph:globe-simple-bold',
   wrench: 'ph:wrench-fill',
   buildings: 'ph:buildings-fill',
+  close: 'ph:x-bold',
 } as const;
 
 export type IconName = keyof typeof icons;

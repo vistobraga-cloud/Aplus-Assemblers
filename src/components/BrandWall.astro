@@ -17,9 +17,16 @@ import { getDict, toLocale } from '@i18n/index';
  * eighteen marks is not a project worth having, so every mark sits in a chip
  * that stays light in both themes.
  *
- * Logo files are optional. Any brand without one renders as a typographic
- * chip, so the section is complete before the artwork exists and simply
- * sharpens when it arrives.
+ * TYPE IS THE DEFAULT, NOT A PLACEHOLDER. A brand without a logo file
+ * renders as its name set in the display face. That is deliberate: naming a
+ * mark in plain type is the safest form of nominative use there is, safer
+ * than reproducing the artwork, and eighteen real logo files are eighteen
+ * different colours, weights and aspect ratios that read as a scrapbook
+ * unless every one is redrawn to a common treatment. It is also the version a
+ * search engine can read.
+ *
+ * Drop a file in src/assets/brands/ named after the brand's `logo` key and
+ * that one brand switches to artwork; the rest stay as type.
  */
 const dict = getDict(toLocale(Astro.currentLocale));
 
@@ -50,8 +57,8 @@ const wall = equipmentBrands.map((brand) => ({
     {
       wall.map((brand) => (
         <li
-          class={`flex h-20 items-center justify-center rounded-xl px-4 ${
-            brand.art ? 'logo-chip' : 'border-2 border-dashed border-line-strong bg-surface-2'
+          class={`flex h-20 items-center justify-center rounded-xl px-3 ${
+            brand.art ? 'logo-chip' : 'brand-chip'
           }`}
         >
           {brand.art ? (
@@ -64,11 +71,8 @@ const wall = equipmentBrands.map((brand) => ({
               class="max-h-7 w-auto object-contain"
             />
           ) : (
-            <span class="text-center">
-              <span class="block text-sm font-bold text-body">{brand.name}</span>
-              <span class="mt-0.5 block text-[0.6rem] font-bold tracking-widest text-faint uppercase">
-                Logo
-              </span>
+            <span class="display text-center text-[0.95rem] leading-tight tracking-tight text-body">
+              {brand.name}
             </span>
           )}
         </li>

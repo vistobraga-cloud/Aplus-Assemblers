@@ -1,36 +1,42 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
+import Icon from '@components/icons/Icon.astro';
 import { gallery } from '@data/gallery';
 import { getDict, toLocale } from '@i18n/index';
 
 /**
- * The wall of finished work, laid out as masonry.
+ * The wall of finished work, laid out as masonry, openable.
  *
- * NO JAVASCRIPT, AND NO LIBRARY. Masonry is usually reached for as a React
- * component that measures every tile and absolutely positions it on resize.
- * CSS multi-column does the same job here for nothing: the browser flows the
- * tiles down column one, then column two, and `break-inside: avoid` stops a
- * photo being sliced across the boundary. This page ships about 2KB of script
- * in total and a masonry library would be twenty times that on its own.
+ * NO JAVASCRIPT FOR THE LAYOUT, AND NO LIBRARY. Masonry is usually reached for
+ * as a React component that measures every tile and absolutely positions it on
+ * resize. CSS multi-column does the same job for nothing: the browser flows
+ * the tiles down column one, then column two, and `break-inside: avoid` stops
+ * a photo being sliced across the boundary.
  *
  * The one thing columns cost is reading order: tiles run top-to-bottom per
  * column rather than left-to-right per row. For a wall of photographs where no
- * tile depends on the one beside it, that is not a sequence anybody reads, so
- * nothing is lost.
+ * tile depends on the one beside it, that is not a sequence anybody reads.
+ *
+ * THE PHOTOGRAPH IS THE TILE. An earlier version put the image in a bordered
+ * box with the caption in a bar underneath, which read as a contact sheet
+ * rather than as work worth looking at. The picture now fills the tile edge to
+ * edge and the caption sits on a scrim over the bottom of it, so the eye lands
+ * on the photograph first.
+ *
+ * OPENING ONE IS THE POINT. These are the only evidence on the page that the
+ * work is real, and a 170px thumbnail nobody can enlarge wastes them. Tapping
+ * a tile opens it in a native <dialog>, at a size Astro generated for that
+ * purpose rather than the thumbnail scaled up. <dialog> brings the backdrop,
+ * the Escape key and the focus handling with it, so the whole thing costs
+ * about twenty lines.
  *
  * MIXED RATIOS ARE THE POINT. Uniform rectangles in columns is just a grid
- * with extra steps. The ratios come from data/gallery.ts so the wall has its
- * shape before a single photograph exists, and so whoever supplies a photo
- * knows the crop it has to survive.
+ * with extra steps. The ratios come from data/gallery.ts, which follows what
+ * the camera actually produces.
  *
- * AN EMPTY SLOT IS ALLOWED TO OUTGROW ITS RATIO, and does: at 166px wide on a
- * phone the 16/9 slot renders nearer 1/1 because the caption needs the room.
- * That is the right way round. `aspect-ratio` yields to content rather than
- * clipping it, so the alternative to a slightly taller box is a caption with
- * its last line cut off. Do not "fix" this by forcing a height. It only
- * affects empty slots — once the photograph is in, the image holds the ratio
- * exactly and the caption sits below it, where it cannot collide with
- * anything.
+ * AN EMPTY SLOT IS ALLOWED TO OUTGROW ITS RATIO. `aspect-ratio` yields to
+ * content rather than clipping it, so the alternative to a slightly taller box
+ * is a caption with its last line cut off. It only affects empty slots.
  *
  * Captions pair BY POSITION with the ids in data/gallery.ts. The ids are
  * structure and the captions are copy, so they live apart, and pairing by
@@ -44,16 +50,22 @@ const photos = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 
-const wall = gallery.map((shot, index) => ({
-  ...shot,
-  caption: dict.gallery.items[index] ?? '',
-  art:
-    photos[`/src/assets/gallery/${shot.id}.jpg`]?.default ??
-    photos[`/src/assets/gallery/${shot.id}.jpeg`]?.default ??
-    photos[`/src/assets/gallery/${shot.id}.png`]?.default ??
-    photos[`/src/assets/gallery/${shot.id}.webp`]?.default ??
-    photos[`/src/assets/gallery/${shot.id}.avif`]?.default,
-}));
+const wall = await Promise.all(
+  gallery.map(async (shot, index) => {
+    const art =
+      photos[`/src/assets/gallery/${shot.id}.jpg`]?.default ??
+      photos[`/src/assets/gallery/${shot.id}.jpeg`]?.default ??
+      photos[`/src/assets/gallery/${shot.id}.png`]?.default ??
+      photos[`/src/assets/gallery/${shot.id}.webp`]?.default ??
+      photos[`/src/assets/gallery/${shot.id}.avif`]?.default;
+
+    // The enlargement, built at a size worth opening rather than the tile
+    // scaled up. Only generated for slots that actually have a photograph.
+    const full = art ? await getImage({ src: art, width: 1400, format: 'webp' }) : undefined;
+
+    return { ...shot, caption: dict.gallery.items[index] ?? '', art, full };
+  }),
+);
 ---
 
 <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
@@ -67,21 +79,35 @@ const wall = gallery.map((shot, index) => ({
     {
       wall.map((item) => (
         <li class="masonry__item">
-          {item.art ? (
-            <figure class="overflow-hidden rounded-2xl border border-line bg-raised">
+          {item.art && item.full ? (
+            <button
+              type="button"
+              class="gallery-tile group relative block w-full overflow-hidden rounded-2xl"
+              data-gallery-open
+              data-full={item.full.src}
+              data-caption={item.caption}
+              aria-label={item.caption}
+            >
               <Image
                 src={item.art}
                 alt={item.caption}
                 widths={[320, 480, 720]}
-                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw"
+                sizes="(min-width: 1280px) 22vw, (min-width: 640px) 45vw, 46vw"
                 loading="lazy"
-                class="w-full object-cover"
+                class="gallery-tile__img w-full object-cover"
                 style={`aspect-ratio: ${item.ratio}`}
               />
-              <figcaption class="px-4 py-3 text-sm leading-snug text-muted">
-                {item.caption}
-              </figcaption>
-            </figure>
+
+              <span class="gallery-tile__scrim pointer-events-none absolute inset-x-0 bottom-0 flex items-end p-3">
+                <span class="text-left text-[0.8rem] leading-snug font-semibold text-white">
+                  {item.caption}
+                </span>
+              </span>
+
+              <span class="gallery-tile__zoom pointer-events-none absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full">
+                <Icon name="search" size={15} />
+              </span>
+            </button>
           ) : (
             <div
               class="flex flex-col justify-between rounded-2xl border-2 border-dashed border-line-strong bg-surface-2 p-4"
@@ -105,6 +131,15 @@ const wall = gallery.map((shot, index) => ({
   </ul>
 </section>
 
+{/* One dialog for the whole wall; the script swaps what is inside it. */}
+<dialog data-gallery-dialog class="gallery-dialog" aria-label={dict.gallery.heading}>
+  <button type="button" data-gallery-close class="gallery-dialog__close" aria-label={dict.nav.close}>
+    <Icon name="close" size={20} />
+  </button>
+  <img data-gallery-image alt="" />
+  <p data-gallery-text class="gallery-dialog__caption"></p>
+</dialog>
+
 <style>
   /*
    * Multi-column is the masonry.
@@ -112,8 +147,6 @@ const wall = gallery.map((shot, index) => ({
    * Two columns from the smallest screen, not one. Eight full-width tiles
    * stacked measured 3,321px on a 375px phone, which is four screens of
    * gallery to scroll past on the device most of this traffic arrives on.
-   * Two columns halves that, and a photograph of a rack does not need to be
-   * 343px wide to be read.
    */
   .masonry {
     column-count: 2;
@@ -153,4 +186,179 @@ const wall = gallery.map((shot, index) => ({
       margin-bottom: 1.25rem;
     }
   }
+
+  /* -- the tile ---------------------------------------------------------- */
+
+  .gallery-tile {
+    cursor: zoom-in;
+    background-color: var(--app-surface-2);
+    box-shadow:
+      0 1px 2px rgb(3 32 45 / 0.14),
+      0 14px 28px -18px var(--app-shadow);
+    transition:
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .gallery-tile__img {
+    display: block;
+    transition: transform 320ms ease;
+  }
+
+  /* The caption is white on the photograph, so it needs its own ground rather
+     than luck. The scrim is opaque enough at the baseline to carry text over
+     whatever the picture is doing down there. */
+  .gallery-tile__scrim {
+    background-image: linear-gradient(
+      to top,
+      rgb(3 12 20 / 0.92) 0%,
+      rgb(3 12 20 / 0.72) 45%,
+      rgb(3 12 20 / 0) 100%
+    );
+    min-height: 55%;
+    opacity: 1;
+    transition: opacity 220ms ease;
+  }
+
+  .gallery-tile__zoom {
+    background-color: rgb(3 12 20 / 0.62);
+    color: #ffffff;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  @media (hover: hover) {
+    .gallery-tile:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 2px 6px rgb(3 32 45 / 0.18),
+        0 24px 44px -20px var(--app-shadow);
+    }
+
+    .gallery-tile:hover .gallery-tile__img {
+      transform: scale(1.05);
+    }
+
+    .gallery-tile:hover .gallery-tile__zoom,
+    .gallery-tile:focus-visible .gallery-tile__zoom {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* -- the enlargement ---------------------------------------------------- */
+
+  .gallery-dialog {
+    max-width: min(94vw, 1100px);
+    max-height: 92vh;
+    padding: 0;
+    border: 0;
+    border-radius: 1rem;
+    background-color: var(--app-raised);
+    color: var(--app-text);
+    overflow: hidden;
+  }
+
+  .gallery-dialog::backdrop {
+    background-color: rgb(3 12 20 / 0.82);
+  }
+
+  .gallery-dialog img {
+    display: block;
+    width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+    background-color: #0b1219;
+  }
+
+  .gallery-dialog__caption {
+    margin: 0;
+    padding: 0.9rem 1.15rem 1.1rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--app-text-muted);
+  }
+
+  .gallery-dialog__close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 1;
+    display: inline-flex;
+    height: 2.4rem;
+    width: 2.4rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background-color: rgb(3 12 20 / 0.62);
+    color: #ffffff;
+  }
+
+  /* Anyone who asked the OS to calm motion down keeps the depth and loses the
+     travel. */
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-tile,
+    .gallery-tile__img,
+    .gallery-tile__zoom,
+    .gallery-tile__scrim {
+      transition: none;
+    }
+
+    .gallery-tile:hover {
+      transform: none;
+    }
+
+    .gallery-tile:hover .gallery-tile__img {
+      transform: none;
+    }
+  }
 </style>
+
+<script>
+  /*
+   * The enlargement. Progressive enhancement: with the script blocked every
+   * tile is still a photograph with its caption on it, just not openable.
+   */
+  const dialog = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
+  const image = document.querySelector<HTMLImageElement>('[data-gallery-image]');
+  const text = document.querySelector<HTMLElement>('[data-gallery-text]');
+
+  if (dialog && image && text) {
+    document.querySelectorAll<HTMLElement>('[data-gallery-open]').forEach((tile) => {
+      tile.addEventListener('click', () => {
+        const full = tile.dataset.full;
+        const caption = tile.dataset.caption ?? '';
+        if (!full) return;
+        image.src = full;
+        image.alt = caption;
+        text.textContent = caption;
+        dialog.showModal();
+      });
+    });
+
+    document
+      .querySelector('[data-gallery-close]')
+      ?.addEventListener('click', () => dialog.close());
+
+    // Clicking the backdrop closes it. The dialog itself is the click target
+    // for anything outside the panel, so compare against its own box.
+    dialog.addEventListener('click', (event) => {
+      const box = dialog.getBoundingClientRect();
+      const outside =
+        event.clientX < box.left ||
+        event.clientX > box.right ||
+        event.clientY < box.top ||
+        event.clientY > box.bottom;
+      if (outside) dialog.close();
+    });
+
+    // Drop the source on close so a reopened dialog never flashes the previous
+    // photograph while the next one decodes.
+    dialog.addEventListener('close', () => {
+      image.removeAttribute('src');
+    });
+  }
+</script>

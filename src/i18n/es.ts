@@ -22,6 +22,7 @@ export const es: Dict = {
     book: 'Reservar una cita',
     call: 'Llamar',
     skipToContent: 'Ir al contenido',
+    close: 'Cerrar',
     language: 'Idioma',
     theme: 'Cambiar tema',
     themeToLight: 'Cambiar a tema claro',

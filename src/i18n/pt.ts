@@ -25,6 +25,7 @@ export const pt: Dict = {
     book: 'Marcar horário',
     call: 'Ligar',
     skipToContent: 'Ir para o conteúdo',
+    close: 'Fechar',
     language: 'Idioma',
     theme: 'Mudar o tema',
     themeToLight: 'Mudar para o tema claro',

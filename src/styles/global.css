@@ -547,9 +547,50 @@
   }
 
   /*
+   * A brand set as type rather than as artwork.
+   *
+   * This is not a placeholder waiting for a logo. Setting a mark's name in
+   * plain type is the safest form of nominative use there is — safer than
+   * reproducing the artwork — and it is the only version of this wall that can
+   * look like one designed thing. Eighteen real logo files are eighteen
+   * different colours, weights and aspect ratios, and a grid of them reads as
+   * a scrapbook unless every one is redrawn to a common treatment.
+   *
+   * It is also the version a search engine can read, which is the same
+   * argument the kit strip makes about naming equipment in words.
+   *
+   * If real artwork does arrive, `logo-chip` below takes over per brand and
+   * this treatment simply stops being used for that one.
+   */
+  .brand-chip {
+    background-color: var(--app-raised);
+    border: 1px solid var(--app-border-strong);
+    /* A white chip on the light theme's #f2f6f8 measures 1.09 against the page
+       and the 11% border does not rescue it: eighteen chips that do not read
+       as chips. The shadow is what gives the edge, the same way it does on a
+       review card. */
+    box-shadow:
+      0 1px 2px rgb(13 30 45 / 0.07),
+      0 6px 14px -8px var(--app-shadow);
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  @media (hover: hover) {
+    .brand-chip:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 2px 4px rgb(13 30 45 / 0.09),
+        0 10px 20px -10px var(--app-shadow);
+    }
+  }
+
+  /*
    * Brand logos are almost always dark artwork on transparency, so they
    * disappear on a dark ground. Rather than hunt down a white variant of
-   * seven marks, each sits in a chip that stays light in both themes.
+   * eighteen marks, each sits in a chip that stays light in both themes.
    */
   .logo-chip {
     background-color: #ffffff;
