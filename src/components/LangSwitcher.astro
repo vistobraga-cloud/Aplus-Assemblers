@@ -1,5 +1,6 @@
 ---
 import Flag from '@components/Flag.astro';
+import Icon from '@components/icons/Icon.astro';
 import { alternates, neutralPath, toLocale, getDict, type Locale } from '@i18n/index';
 
 /**
@@ -16,12 +17,16 @@ import { alternates, neutralPath, toLocale, getDict, type Locale } from '@i18n/i
  *
  * FLAGS, WITH THE CAVEAT WRITTEN DOWN. A flag is a country and a language is
  * not: Spanish is spoken in twenty of them, and this radius is more Dominican
- * and Guatemalan than Mexican. Mexico is here because it is the flag most US
- * Spanish speakers read as "this is for me", and swapping it for Spain is one
- * word on the FLAGS map below. What keeps this honest is that the flag never
- * travels alone — the language's own name in its own language sits beside it
- * in the open panel, and that name is what actually identifies the option.
- * The trigger is also labelled for a screen reader, which never sees a flag.
+ * and Guatemalan than Mexican. Spain is the flag here because it is the one
+ * that reads as "the Spanish language" rather than as one nation's claim on
+ * it, and because at icon size it is unmistakable where a Mexican tricolour
+ * without its arms is the flag of Italy. Mexico is drawn and one word away in
+ * the FLAGS map below.
+ *
+ * What keeps this honest is that the flag never travels alone: the language's
+ * own name in its own language sits beside it in the open panel, and that name
+ * is what actually identifies the option. The trigger is labelled for a screen
+ * reader, which never sees a picture.
  */
 interface Props {
   class?: string;
@@ -37,7 +42,7 @@ const options = alternates(route);
 /** One line to change if the market calls for Spain over Mexico. */
 const FLAGS: Record<Locale, 'us' | 'br' | 'mx' | 'es'> = {
   en: 'us',
-  es: 'mx',
+  es: 'es',
   pt: 'br',
 };
 ---
@@ -65,7 +70,10 @@ const FLAGS: Record<Locale, 'us' | 'br' | 'mx' | 'es'> = {
             class="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-muted transition hover:bg-surface-2 hover:text-body aria-[current]:text-accent"
           >
             <Flag country={FLAGS[option.locale]} size={20} />
-            {option.label}
+            <span class="flex-1">{option.label}</span>
+            {/* Colour alone never carries state. The tick is what tells a
+                colour-blind visitor which language they are already reading. */}
+            {option.locale === locale && <Icon name="check" size={14} />}
           </a>
         </li>
       ))
