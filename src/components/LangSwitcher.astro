@@ -1,6 +1,6 @@
 ---
-import Icon from '@components/icons/Icon.astro';
-import { alternates, neutralPath, toLocale, getDict } from '@i18n/index';
+import Flag from '@components/Flag.astro';
+import { alternates, neutralPath, toLocale, getDict, type Locale } from '@i18n/index';
 
 /**
  * Language switcher.
@@ -13,6 +13,15 @@ import { alternates, neutralPath, toLocale, getDict } from '@i18n/index';
  * Each link keeps the current route — someone reading the privacy page in
  * Portuguese who switches to Spanish lands on the Spanish privacy page, not
  * back at the top of the site.
+ *
+ * FLAGS, WITH THE CAVEAT WRITTEN DOWN. A flag is a country and a language is
+ * not: Spanish is spoken in twenty of them, and this radius is more Dominican
+ * and Guatemalan than Mexican. Mexico is here because it is the flag most US
+ * Spanish speakers read as "this is for me", and swapping it for Spain is one
+ * word on the FLAGS map below. What keeps this honest is that the flag never
+ * travels alone — the language's own name in its own language sits beside it
+ * in the open panel, and that name is what actually identifies the option.
+ * The trigger is also labelled for a screen reader, which never sees a flag.
  */
 interface Props {
   class?: string;
@@ -24,19 +33,26 @@ const locale = toLocale(Astro.currentLocale);
 const dict = getDict(locale);
 const route = neutralPath(Astro.url.pathname);
 const options = alternates(route);
+
+/** One line to change if the market calls for Spain over Mexico. */
+const FLAGS: Record<Locale, 'us' | 'br' | 'mx' | 'es'> = {
+  en: 'us',
+  es: 'mx',
+  pt: 'br',
+};
 ---
 
 <details class={`lang relative ${className}`}>
   <summary
-    aria-label={dict.nav.language}
-    class="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-line px-3 py-2 text-sm font-bold text-muted transition marker:content-none hover:border-line-strong hover:text-body"
+    aria-label={`${dict.nav.language}: ${dict.label}`}
+    class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-line py-1.5 pr-3 pl-1.5 text-sm font-bold text-muted transition marker:content-none hover:border-line-strong hover:text-body"
   >
-    <Icon name="globe" size={15} />
+    <Flag country={FLAGS[locale]} size={22} />
     <span class="uppercase">{locale}</span>
   </summary>
 
   <ul
-    class="absolute right-0 z-40 mt-2 min-w-40 overflow-hidden rounded-xl border border-line bg-raised py-1 shadow-lg"
+    class="absolute right-0 z-40 mt-2 min-w-44 overflow-hidden rounded-xl border border-line bg-raised py-1 shadow-lg"
   >
     {
       options.map((option) => (
@@ -46,8 +62,9 @@ const options = alternates(route);
             hreflang={getDict(option.locale).htmlLang}
             lang={getDict(option.locale).htmlLang}
             aria-current={option.locale === locale ? 'true' : undefined}
-            class="block px-4 py-2.5 text-sm font-semibold text-muted transition hover:bg-surface-2 hover:text-body aria-[current]:text-accent"
+            class="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-muted transition hover:bg-surface-2 hover:text-body aria-[current]:text-accent"
           >
+            <Flag country={FLAGS[option.locale]} size={20} />
             {option.label}
           </a>
         </li>
