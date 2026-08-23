@@ -204,12 +204,7 @@ const serviceSections = SERVICE_GROUPS.map((keys) => ({
 
   <!-- The lifecycle -->
   <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-28">
-    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
-      <div class="lg:col-span-4">
-        <h2 class="display display-lg text-body">{dict.lifecycle.heading}</h2>
-        <p class="mt-5 leading-relaxed text-muted">{dict.lifecycle.body}</p>
-      </div>
-
+    <div>
       {
         /* Each is its own <section> with its own id, because the header menu
            scrolls to them. scroll-mt clears the sticky header; the value is
@@ -230,7 +225,7 @@ const serviceSections = SERVICE_GROUPS.map((keys) => ({
            at lg — the DOM keeps text before photo always, which is also the
            order a screen reader gets regardless of the visual swap. */
       }
-      <div class="lg:col-span-8">
+      <div>
         {
           serviceSections.map((service, index) => {
             const photoRight = index % 2 === 0;
