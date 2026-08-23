@@ -30,24 +30,24 @@ export interface EquipmentBrand {
 }
 
 export const equipmentBrands: EquipmentBrand[] = [
-  { name: 'NordicTrack', category: 'cardio' },
+  { name: 'NordicTrack', logo: 'nordictrack', category: 'cardio' },
   { name: 'Sole', category: 'cardio' },
-  { name: 'ProForm', category: 'cardio' },
-  { name: 'Horizon', category: 'cardio' },
+  { name: 'ProForm', logo: 'proform', category: 'cardio' },
+  { name: 'Horizon', logo: 'horizon', category: 'cardio' },
   { name: 'Concept2', category: 'cardio' },
   { name: 'WaterRower', category: 'cardio' },
-  { name: 'Schwinn', category: 'cardio' },
-  { name: 'Peloton', category: 'connected' },
-  { name: 'Tonal', category: 'connected' },
-  { name: 'Echelon', category: 'connected' },
-  { name: 'Hydrow', category: 'connected' },
+  { name: 'Schwinn', logo: 'schwinn', category: 'cardio' },
+  { name: 'Peloton', logo: 'peloton', category: 'connected' },
+  { name: 'Tonal', logo: 'tonal', category: 'connected' },
+  { name: 'Echelon', logo: 'echelon', category: 'connected' },
+  { name: 'Hydrow', logo: 'hydrow', category: 'connected' },
   { name: 'Bowflex', category: 'strength' },
   { name: 'REP Fitness', category: 'strength' },
-  { name: 'Rogue', category: 'strength' },
+  { name: 'Rogue', logo: 'rogue', category: 'strength' },
   { name: 'Titan', category: 'strength' },
   { name: 'Body-Solid', category: 'strength' },
-  { name: 'Marcy', category: 'strength' },
-  { name: 'Life Fitness', category: 'strength' },
+  { name: 'Marcy', logo: 'marcy', category: 'strength' },
+  { name: 'Life Fitness', logo: 'life-fitness', category: 'strength' },
 ];
 
 /** Marks named on the site, for the build check that guards the disclaimer. */
