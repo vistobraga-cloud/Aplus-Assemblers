@@ -138,11 +138,12 @@ const serviceSections = SERVICE_GROUPS.map((keys) => ({
             class="hero-drift h-full w-full object-cover object-right"
           />
           {/* Same drift as the photograph so the two layers stay registered
-              while the clip fades in over it. No src here on purpose: the
-              script below picks a size and attaches one only when motion is
-              welcome, so the bytes are never fetched otherwise. */}
+              while the clip fades in over it. Its box is taller than the
+              section on purpose — see .hero-video in global.css. No src here:
+              the script below picks a size and attaches one only when motion
+              is welcome, so the bytes are never fetched otherwise. */}
           <video
-            class="hero-video hero-drift absolute inset-0 h-full w-full object-cover object-right"
+            class="hero-video hero-drift absolute inset-x-0 w-full object-cover object-right"
             muted
             loop
             playsinline
