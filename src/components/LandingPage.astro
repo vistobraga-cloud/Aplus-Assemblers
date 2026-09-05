@@ -137,6 +137,22 @@ const serviceSections = SERVICE_GROUPS.map((keys) => ({
             decoding="sync"
             class="hero-drift h-full w-full object-cover object-right"
           />
+          {/* Same drift as the photograph so the two layers stay registered
+              while the clip fades in over it. No src here on purpose: the
+              script below picks a size and attaches one only when motion is
+              welcome, so the bytes are never fetched otherwise. */}
+          <video
+            class="hero-video hero-drift absolute inset-0 h-full w-full object-cover object-right"
+            muted
+            loop
+            playsinline
+            autoplay
+            preload="none"
+            disablepictureinpicture
+            tabindex="-1"
+            data-src="/video/hero-loop.mp4"
+            data-src-small="/video/hero-loop-720.mp4"
+          ></video>
           <div class="hero-veil absolute inset-0"></div>
         </div>
       )
@@ -422,4 +438,23 @@ const serviceSections = SERVICE_GROUPS.map((keys) => ({
       />
     </div>
   </section>
+<script>
+  // Hero motion layer. See .hero-video in global.css for why the clip fades in
+  // over the photograph rather than replacing it.
+  const video = document.querySelector<HTMLVideoElement>('video.hero-video');
+  const wantsMotion = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  const savesData = Boolean((navigator as { connection?: { saveData?: boolean } }).connection?.saveData);
+
+  if (video && wantsMotion && !savesData) {
+    const small = matchMedia('(max-width: 1023px)').matches;
+    const src = small ? video.dataset.srcSmall : video.dataset.src;
+    if (src) {
+      video.addEventListener('playing', () => video.classList.add('is-live'), { once: true });
+      video.src = src;
+      video.play().catch(() => {
+        /* Autoplay refused: the photograph simply stays. */
+      });
+    }
+  }
+</script>
 </BaseLayout>

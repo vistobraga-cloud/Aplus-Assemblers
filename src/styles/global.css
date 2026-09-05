@@ -434,6 +434,39 @@
     }
   }
 
+  /*
+   * The hero's motion layer: a short looping clip generated from the same
+   * photograph, sitting on top of it. The photograph stays underneath as the
+   * LCP image and the poster; the clip fades in only once it is actually
+   * playing, so a slow network, a failed decode or a browser that refuses
+   * autoplay all leave the page looking exactly as it did before the clip
+   * existed. The script in LandingPage.astro decides whether to load it at
+   * all (reduced motion and data-saver both opt out).
+   */
+  .hero-video {
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+  .hero-video.is-live {
+    opacity: 1;
+  }
+
+  /* The photograph carries its own blurred panel behind the copy; the clip
+     shows the sharp room there instead, so the veil leans a little harder on
+     the reading side while the clip is up. Desktop only: the mobile veil is
+     top-to-bottom and already dark enough. */
+  @media (min-width: 1024px) {
+    .hero-video.is-live ~ .hero-veil {
+      background-image: linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.8) 0%,
+        rgb(0 0 0 / 0.72) 45%,
+        rgb(0 0 0 / 0.34) 66%,
+        rgb(0 0 0 / 0.04) 82%
+      );
+    }
+  }
+
   /* Text sitting directly on the reviews band, which is dark in both themes. */
   .on-tt {
     color: #f2fbff;
