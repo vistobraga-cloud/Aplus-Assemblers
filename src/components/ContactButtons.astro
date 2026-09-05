@@ -41,7 +41,7 @@ const secondary =
     : 'border-line-strong bg-raised text-body hover:border-body';
 
 const primary =
-  'inline-flex items-center justify-center gap-2.5 rounded-full bg-accent-solid px-7 py-4 text-base font-extrabold text-white shadow-lg transition duration-200 hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0';
+  'inline-flex items-center justify-center gap-2.5 rounded-full bg-accent-solid px-7 py-4 text-base font-extrabold text-white shadow-lg press press-lift hover:opacity-90';
 ---
 
 <div class={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`}>
@@ -55,7 +55,7 @@ const primary =
         <a
           href={telHref}
           data-cta-placement={placement}
-          class={`inline-flex items-center justify-center gap-2.5 rounded-full border px-7 py-4 text-base font-bold transition duration-200 hover:-translate-y-0.5 ${secondary}`}
+          class={`inline-flex items-center justify-center gap-2.5 rounded-full border px-7 py-4 text-base font-bold press press-lift ${secondary}`}
         >
           <Icon name="phone" />
           {fill(dict.hero.call, { phone: phoneDisplay })}
@@ -73,7 +73,7 @@ const primary =
     href={whatsappHref(message)}
     data-cta-placement={placement}
     rel="noopener"
-    class={`inline-flex items-center justify-center gap-2.5 rounded-full border px-7 py-4 text-base font-bold transition duration-200 hover:-translate-y-0.5 ${secondary}`}
+    class={`inline-flex items-center justify-center gap-2.5 rounded-full border px-7 py-4 text-base font-bold press press-lift ${secondary}`}
   >
     <Icon name="whatsapp" />
     {dict.hero.secondary}

@@ -220,6 +220,15 @@
   --color-brand-900: #243d27;
 }
 
+/*
+ * One easing for everything the visitor presses or hovers. The browser's
+ * built-in curves are too soft to register as intent; this one starts fast
+ * and settles, which is what makes a 160ms press read as instant.
+ */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -445,10 +454,17 @@
    */
   .hero-video {
     opacity: 0;
-    transition: opacity 900ms ease;
+    /* The clip and the photograph are not the same crop, so a plain crossfade
+       shows two rooms for half a second. Resolving from a blur reads as one
+       picture coming into focus instead. */
+    filter: blur(8px);
+    transition:
+      opacity 900ms ease,
+      filter 900ms ease;
   }
   .hero-video.is-live {
     opacity: 1;
+    filter: blur(0);
   }
 
   /* The photograph carries its own blurred panel behind the copy; the clip
@@ -493,8 +509,8 @@
       0 1px 2px rgb(3 32 45 / 0.14),
       0 18px 36px -20px rgb(3 32 45 / 0.5);
     transition:
-      transform 180ms ease,
-      box-shadow 180ms ease;
+      transform 180ms var(--ease-out),
+      box-shadow 180ms var(--ease-out);
   }
 
   /* The date and job line inside a card. 4.6:1 on white. */
@@ -617,8 +633,8 @@
       0 6px 14px -8px var(--app-shadow);
     transition:
       border-color 160ms ease,
-      box-shadow 160ms ease,
-      transform 160ms ease;
+      box-shadow 160ms var(--ease-out),
+      transform 160ms var(--ease-out);
   }
 
   @media (hover: hover) {
@@ -773,5 +789,46 @@
   a:not([class]) {
     text-underline-offset: 0.22em;
     text-decoration-thickness: 0.08em;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Pressable things                                                          */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Every button and button-shaped link on the page takes `press`, and the ones
+ * that lift on hover take `press-lift` as well.
+ *
+ * The press itself is the part that matters: a 3% scale-down for the 100ms
+ * the finger is on it is what tells the visitor the interface heard them,
+ * long before the phone app opens. The hover lift is gated to a real pointer
+ * so a tap on a phone does not leave the button hovering in mid-air after
+ * the finger has gone.
+ *
+ * Properties are named one by one. `transition: all` would also animate the
+ * theme swap on every one of these at once, which is not a moment anyone
+ * asked to watch.
+ */
+@layer components {
+  .press {
+    transition:
+      transform 160ms var(--ease-out),
+      box-shadow 160ms var(--ease-out),
+      opacity 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .press-lift:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .press:active {
+    transform: scale(0.97);
+    transition-duration: 100ms;
   }
 }

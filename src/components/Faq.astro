@@ -26,7 +26,7 @@ const { items, heading, class: className = '' } = Astro.props;
     {
       items.map((item, index) => (
         <details class="group" open={index === 0}>
-          <summary class="flex cursor-pointer list-none items-start justify-between gap-4 py-5 text-left text-lg font-bold text-body transition marker:content-none hover:text-accent">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-4 py-5 text-left text-lg font-bold text-body transition-colors marker:content-none hover:text-accent">
             <span>{item.q}</span>
             <Icon
               name="chevronDown"
@@ -44,5 +44,18 @@ const { items, heading, class: className = '' } = Astro.props;
 <style>
   summary::-webkit-details-marker {
     display: none;
+  }
+
+  /* The answer settles in under the question rather than snapping into
+     place. Short, because someone reading the FAQ opens several in a row. */
+  details[open] > p {
+    animation: faq-in 180ms var(--ease-out) both;
+  }
+
+  @keyframes faq-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
   }
 </style>

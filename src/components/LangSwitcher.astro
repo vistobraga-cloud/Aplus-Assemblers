@@ -50,7 +50,7 @@ const FLAGS: Record<Locale, 'us' | 'br' | 'mx' | 'es'> = {
 <details class={`lang relative ${className}`}>
   <summary
     aria-label={`${dict.nav.language}: ${dict.label}`}
-    class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-line py-1.5 pr-3 pl-1.5 text-sm font-bold text-muted transition marker:content-none hover:border-line-strong hover:text-body"
+    class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-line py-1.5 pr-3 pl-1.5 text-sm font-bold text-muted press marker:content-none hover:border-line-strong hover:text-body"
   >
     <Flag country={FLAGS[locale]} size={22} />
     <span class="uppercase">{locale}</span>
@@ -67,7 +67,7 @@ const FLAGS: Record<Locale, 'us' | 'br' | 'mx' | 'es'> = {
             hreflang={getDict(option.locale).htmlLang}
             lang={getDict(option.locale).htmlLang}
             aria-current={option.locale === locale ? 'true' : undefined}
-            class="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-muted transition hover:bg-surface-2 hover:text-body aria-[current]:text-accent"
+            class="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-body aria-[current]:text-accent"
           >
             <Flag country={FLAGS[option.locale]} size={20} />
             <span class="flex-1">{option.label}</span>
@@ -84,6 +84,20 @@ const FLAGS: Record<Locale, 'us' | 'br' | 'mx' | 'es'> = {
 <style>
   summary::-webkit-details-marker {
     display: none;
+  }
+
+  /* The panel grows out of the button it belongs to, from its top-right
+     corner, not from nowhere. Closing is instant: the visitor already chose. */
+  details.lang[open] > ul {
+    transform-origin: top right;
+    animation: lang-in 160ms var(--ease-out) both;
+  }
+
+  @keyframes lang-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(-4px);
+    }
   }
 </style>
 

@@ -195,13 +195,13 @@ const wall = await Promise.all(
       0 1px 2px rgb(3 32 45 / 0.14),
       0 14px 28px -18px var(--app-shadow);
     transition:
-      transform 220ms ease,
-      box-shadow 220ms ease;
+      transform 220ms var(--ease-out),
+      box-shadow 220ms var(--ease-out);
   }
 
   .gallery-tile__img {
     display: block;
-    transition: transform 320ms ease;
+    transition: transform 320ms var(--ease-out);
   }
 
   /* The caption is white on the photograph, so it needs its own ground rather
@@ -226,7 +226,7 @@ const wall = await Promise.all(
     transform: translateY(-4px);
     transition:
       opacity 220ms ease,
-      transform 220ms ease;
+      transform 220ms var(--ease-out);
   }
 
   @media (hover: hover) {
@@ -265,6 +265,27 @@ const wall = await Promise.all(
     background-color: rgb(3 12 20 / 0.82);
   }
 
+  /* A modal is the one popover that scales from the centre, because it is
+     not attached to anything. It arrives from 96%, never from nothing, and
+     the backdrop fades with it so the page dims rather than blinks. */
+  .gallery-dialog[open] {
+    animation: gallery-dialog-in 220ms var(--ease-out) both;
+  }
+  .gallery-dialog[open]::backdrop {
+    animation: gallery-backdrop-in 220ms ease both;
+  }
+  @keyframes gallery-dialog-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+  @keyframes gallery-backdrop-in {
+    from {
+      opacity: 0;
+    }
+  }
+
   /*
    * :global is load-bearing. Astro scopes a component's styles with a
    * data attribute stamped on elements the template renders, and this image is
@@ -301,6 +322,14 @@ const wall = await Promise.all(
     border-radius: 999px;
     background-color: rgb(3 12 20 / 0.62);
     color: #ffffff;
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 160ms ease;
+  }
+
+  .gallery-dialog__close:active {
+    transform: scale(0.94);
+    transition-duration: 100ms;
   }
 
   /* Anyone who asked the OS to calm motion down keeps the depth and loses the
